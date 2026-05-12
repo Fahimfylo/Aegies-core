@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { User, Shield, Bell, Lock, Database, Globe, Save, RefreshCcw } from "lucide-react";
+import { User, Shield, Bell, Lock, Database, Globe, Save, RefreshCcw, Download, Terminal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,13 @@ export default function Settings() {
         description: "Your security preferences have been synchronized with the AegisCore cloud.",
       });
     }, 1500);
+  };
+
+  const handleExport = () => {
+    toast({
+      title: "Export Initiated",
+      description: "Preparing your tactical configuration and logs for download...",
+    });
   };
 
   return (
@@ -108,31 +115,35 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          {/* Notifications */}
+          {/* Export & Backup */}
           <Card className="glass-dark border-white/5">
             <CardHeader className="flex flex-row items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                <Bell className="w-6 h-6 text-yellow-500" />
+              <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                <Database className="w-6 h-6 text-green-500" />
               </div>
               <div>
-                <CardTitle className="text-xl">Alert Routing</CardTitle>
-                <CardDescription>Manage how critical threat notifications are delivered.</CardDescription>
+                <CardTitle className="text-xl">Data & Export</CardTitle>
+                <CardDescription>Download your scan history and environment configs.</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>High-Risk Desktop Alerts</Label>
-                  <p className="text-xs text-muted-foreground">Show immediate notification for Critical risk detections.</p>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-4 rounded-lg bg-white/5 border border-white/5">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Export Platform State</p>
+                  <p className="text-xs text-muted-foreground">Generate a portable package of your current code and assets.</p>
                 </div>
-                <Switch defaultChecked />
+                <Button onClick={handleExport} variant="outline" className="border-white/10 hover:bg-white/5 gap-2">
+                  <Download className="w-4 h-4" /> Export Project
+                </Button>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Daily Intelligence Report</Label>
-                  <p className="text-xs text-muted-foreground">Email the GSOC Daily Briefing every morning.</p>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-4 rounded-lg bg-white/5 border border-white/5">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">CLI Integration</p>
+                  <p className="text-xs text-muted-foreground">Get a token to connect your local terminal via Aegis-CLI.</p>
                 </div>
-                <Switch />
+                <Button variant="ghost" className="text-xs font-mono text-muted-foreground">
+                  <Terminal className="w-4 h-4 mr-2" /> Generate Token
+                </Button>
               </div>
             </CardContent>
           </Card>
