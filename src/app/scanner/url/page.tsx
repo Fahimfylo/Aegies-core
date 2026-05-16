@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { Search, Globe, ShieldCheck, AlertTriangle, ShieldAlert, ExternalLink, RefreshCw, Cpu } from "lucide-react";
+import { Search, Globe, ShieldCheck, ShieldAlert, ExternalLink, RefreshCw, Cpu } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { aiUrlRiskAssessment, AiUrlRiskAssessmentOutput } from "@/ai/flows/ai-url-risk-assessment";
 import { useToast } from "@/hooks/use-toast";
+import { RiskGauge } from "@/components/shared";
 
 export default function UrlScanner() {
   const [url, setUrl] = useState("");
@@ -150,30 +151,7 @@ export default function UrlScanner() {
                 <CardTitle className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Threat Radar</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col items-center p-6 space-y-6">
-                <div className="relative w-32 h-32 flex items-center justify-center">
-                   <svg className="w-full h-full -rotate-90">
-                    <circle
-                      cx="64" cy="64" r="58"
-                      fill="transparent"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      className="text-white/5"
-                    />
-                    <circle
-                      cx="64" cy="64" r="58"
-                      fill="transparent"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      strokeDasharray={2 * Math.PI * 58}
-                      strokeDashoffset={2 * Math.PI * 58 * (1 - result.riskScore.score / 100)}
-                      className={result.riskScore.score > 70 ? "text-destructive" : result.riskScore.score > 40 ? "text-accent" : "text-primary"}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-headline font-bold">{result.riskScore.score}</span>
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground">/ 100</span>
-                  </div>
-                </div>
+                <RiskGauge score={result.riskScore.score} />
                 
                 <div className="w-full space-y-4">
                    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5">

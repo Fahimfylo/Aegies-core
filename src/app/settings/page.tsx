@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { User, Shield, Bell, Lock, Database, Globe, Save, RefreshCcw, Download, Terminal } from "lucide-react";
+import { User, Shield, Lock, Database, Save, RefreshCcw, Download, Terminal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

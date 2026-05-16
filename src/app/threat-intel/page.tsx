@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { BookOpen, AlertCircle, ShieldCheck, Zap, Newspaper, TrendingUp, Info, RefreshCw, Cpu } from "lucide-react";
+import { ShieldCheck, Zap, Newspaper, TrendingUp, Info, RefreshCw, Cpu } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,19 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { aiDailySecurityBrief, DailyBriefOutput } from "@/ai/flows/ai-threat-intelligence";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-
-const staticThreats = [
-  { id: 1, title: "CVE-2025-0192: Critical RCE in legacy webservers", date: "4h ago", category: "Vulnerability" },
-  { id: 2, title: "Botnet 'Mirai-X' targeting unsecured industrial IoT", date: "8h ago", category: "Malware" },
-  { id: 3, title: "Phishing campaign spoofing Enterprise MFA prompts", date: "12h ago", category: "Phishing" },
-];
+import { STATIC_THREATS, ACTIVE_VECTORS, TELEMETRY_SOURCES } from "@/constants";
 
 export default function ThreatIntel() {
   const [brief, setBrief] = useState<DailyBriefOutput | null>(null);
   const [loading, setLoading] = useState(true);
   const intelHero = PlaceHolderImages.find(img => img.id === 'threat-intel-hero');
 
-  const fetchBrief = async () => {
+  const fetchBrief = useCallback(async () => {
     setLoading(true);
     try {
       const data = await aiDailySecurityBrief({});
@@ -32,11 +27,11 @@ export default function ThreatIntel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchBrief();
-  }, []);
+  }, [fetchBrief]);
 
   return (
     <div className="min-h-screen bg-[#0A0C16]">
@@ -138,7 +133,7 @@ export default function ThreatIntel() {
                 Latest Bulletins
               </h3>
               <div className="grid gap-4">
-                {staticThreats.map((bulletin) => (
+                {STATIC_THREATS.map((bulletin) => (
                   <Card key={bulletin.id} className="glass-dark border-white/5 hover:border-white/10 transition-colors">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -190,11 +185,7 @@ export default function ThreatIntel() {
                 
                 <div className="space-y-3 pt-4 border-t border-white/5">
                   <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Active Vectors</h4>
-                  {[
-                    { label: "Credential Harvesting", val: 82, color: "bg-primary" },
-                    { label: "Supply Chain Infiltration", val: 45, color: "bg-accent" },
-                    { label: "Zero-Day Exploitation", val: 12, color: "bg-destructive" },
-                  ].map((vector, i) => (
+                  {ACTIVE_VECTORS.map((vector, i) => (
                     <div key={i} className="space-y-1">
                       <div className="flex justify-between text-[10px]">
                         <span>{vector.label}</span>
@@ -215,7 +206,7 @@ export default function ThreatIntel() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {['AlienVault OTX', 'MISP Open Intel', 'Aegis Core HoneyNet', 'VirusTotal Live'].map((src, i) => (
+                  {TELEMETRY_SOURCES.map((src, i) => (
                     <div key={i} className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">{src}</span>
                       <span className="flex h-2 w-2 rounded-full bg-green-500" />

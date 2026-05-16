@@ -1,24 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { Upload, File, AlertCircle, CheckCircle2, ShieldAlert, Cpu, Hash, FileCode } from "lucide-react";
+import { Upload, AlertCircle, CheckCircle2, ShieldAlert, Cpu, FileCode } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { aiThreatReportSummary } from "@/ai/flows/ai-threat-report-summary";
-
-type AnalysisResult = {
-  fileName: string;
-  fileSize: number;
-  extension: string;
-  hash: string;
-  riskScore: number;
-  riskLevel: 'Safe' | 'Low' | 'Medium' | 'High' | 'Critical';
-  findings: string[];
-  aiSummary?: any;
-};
+import { analyzeFileHeuristics, performAiScan } from "@/services";
+import { RiskGauge } from "@/components/shared";
+import { SIMULATED_HASH } from "@/constants";
+import type { AnalysisResult } from "@/types";
 
 export default function FileScanner() {
   const [file, setFile] = useState<File | null>(null);
@@ -34,14 +26,13 @@ export default function FileScanner() {
     }
   };
 
-  const simulateScan = async () => {
+  const simulateScan = useCallback(async () => {
     if (!file) return;
 
     setIsScanning(true);
     setProgress(0);
     setResult(null);
 
-    // Simulate progress
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -52,58 +43,13 @@ export default function FileScanner() {
       });
     }, 150);
 
-    // Actual Analysis Simulation
     setTimeout(async () => {
-      const extension = file.name.split('.').pop()?.toLowerCase() || '';
-      const isDoubleExtension = file.name.split('.').length > 2;
-      const dangerousExtensions = ['exe', 'bat', 'cmd', 'ps1', 'vbs', 'scr', 'sh'];
-      const isDangerous = dangerousExtensions.includes(extension);
-
-      let score = 10;
-      const findings = ["Standard binary signature validation passed."];
-
-      if (isDoubleExtension) {
-        score += 40;
-        findings.push("CRITICAL: Double extension detected (Possible masquerading).");
-      }
-      if (isDangerous) {
-        score += 30;
-        findings.push(`WARNING: Executable extension (.${extension}) detected.`);
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        score += 10;
-        findings.push("High entropy / large binary chunk detected.");
-      }
-
-      const riskLevel = score > 80 ? 'Critical' : score > 60 ? 'High' : score > 30 ? 'Medium' : score > 15 ? 'Low' : 'Safe';
-      
-      const scanInput = {
-        scanType: 'file' as const,
-        timestamp: new Date().toISOString(),
-        riskScore: score,
-        riskLevel: riskLevel,
-        fileDetails: {
-          fileName: file.name,
-          fileSize: file.size,
-          declaredExtension: extension,
-          doubleExtensionDetected: isDoubleExtension,
-          dangerousExtension: isDangerous,
-        }
-      };
+      const heuristicResult = analyzeFileHeuristics(file);
 
       try {
-        const aiSummary = await aiThreatReportSummary(scanInput);
-        setResult({
-          fileName: file.name,
-          fileSize: file.size,
-          extension: extension,
-          hash: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
-          riskScore: score,
-          riskLevel,
-          findings,
-          aiSummary
-        });
-      } catch (error) {
+        const scanResult = await performAiScan(file, heuristicResult);
+        setResult(scanResult);
+      } catch {
         toast({
           title: "AI Summary Failed",
           description: "Could not generate human-readable summary, using heuristic data only.",
@@ -112,18 +58,18 @@ export default function FileScanner() {
         setResult({
           fileName: file.name,
           fileSize: file.size,
-          extension: extension,
-          hash: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
-          riskScore: score,
-          riskLevel,
-          findings,
+          extension: heuristicResult.extension,
+          hash: SIMULATED_HASH,
+          riskScore: heuristicResult.score,
+          riskLevel: heuristicResult.riskLevel,
+          findings: heuristicResult.findings,
         });
       }
 
       setIsScanning(false);
       clearInterval(interval);
     }, 3000);
-  };
+  }, [file, toast]);
 
   return (
     <div className="min-h-screen bg-[#0A0C16]">
@@ -256,30 +202,7 @@ export default function FileScanner() {
                     <CardTitle className="text-sm uppercase tracking-widest font-bold text-muted-foreground">Risk Score</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center p-8 space-y-6">
-                    <div className="relative w-32 h-32 flex items-center justify-center">
-                      <svg className="w-full h-full -rotate-90">
-                        <circle
-                          cx="64" cy="64" r="58"
-                          fill="transparent"
-                          stroke="currentColor"
-                          strokeWidth="8"
-                          className="text-white/5"
-                        />
-                        <circle
-                          cx="64" cy="64" r="58"
-                          fill="transparent"
-                          stroke="currentColor"
-                          strokeWidth="8"
-                          strokeDasharray={2 * Math.PI * 58}
-                          strokeDashoffset={2 * Math.PI * 58 * (1 - result.riskScore / 100)}
-                          className={result.riskScore > 70 ? "text-destructive" : result.riskScore > 40 ? "text-accent" : "text-primary"}
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-headline font-bold">{result.riskScore}</span>
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground">/ 100</span>
-                      </div>
-                    </div>
+                    <RiskGauge score={result.riskScore} />
                     <div className="text-center">
                       <p className="text-sm font-medium mb-1">Threat Probability</p>
                       <p className="text-xs text-muted-foreground">Based on signature heuristics and GenAI entropy checks.</p>

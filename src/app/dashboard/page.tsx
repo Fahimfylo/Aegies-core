@@ -1,21 +1,12 @@
 "use client";
 
 import Navbar from "@/components/navigation/Navbar";
-import { Shield, Search, History, AlertTriangle, CheckCircle, Activity, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Search, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-
-const data = [
-  { name: 'Mon', scans: 45, threats: 2 },
-  { name: 'Tue', scans: 52, threats: 5 },
-  { name: 'Wed', scans: 38, threats: 1 },
-  { name: 'Thu', scans: 65, threats: 12 },
-  { name: 'Fri', scans: 48, threats: 3 },
-  { name: 'Sat', scans: 24, threats: 0 },
-  { name: 'Sun', scans: 31, threats: 1 },
-];
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { DASHBOARD_STATS, CHART_DATA, SYSTEM_HEALTH, RECENT_ALERTS } from "@/constants";
 
 export default function Dashboard() {
   return (
@@ -38,12 +29,7 @@ export default function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[
-            { label: "Total Files Scanned", value: "1,284", icon: Shield, trend: "+12%", color: "text-primary" },
-            { label: "Threats Blocked", value: "43", icon: AlertTriangle, trend: "+5%", color: "text-destructive" },
-            { label: "Safe Domains", value: "892", icon: CheckCircle, trend: "+8%", color: "text-green-500" },
-            { label: "Risk Score Index", value: "14/100", icon: Activity, trend: "-2%", color: "text-accent" },
-          ].map((stat, i) => (
+          {DASHBOARD_STATS.map((stat, i) => (
             <Card key={i} className="glass-dark border-white/5">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -72,7 +58,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="h-[300px] w-full pt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data}>
+                <AreaChart data={CHART_DATA}>
                   <defs>
                     <linearGradient id="colorScans" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
@@ -99,35 +85,20 @@ export default function Dashboard() {
               <CardDescription>Real-time defensive posture</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Database Sync</span>
-                  <span className="text-green-500 font-medium">Synced</span>
+              {SYSTEM_HEALTH.map((item) => (
+                <div key={item.label} className="space-y-2">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-muted-foreground">{item.label}</span>
+                    <span className={`${item.color.replace('bg-', 'text-')} font-medium`}>{item.value}</span>
+                  </div>
+                  <Progress value={item.progress} className="h-1 bg-white/5" indicatorClassName={item.color} />
                 </div>
-                <Progress value={100} className="h-1 bg-white/5" indicatorClassName="bg-green-500" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Heuristic Accuracy</span>
-                  <span className="text-primary font-medium">98.4%</span>
-                </div>
-                <Progress value={98} className="h-1 bg-white/5" indicatorClassName="bg-primary" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">CPU Usage</span>
-                  <span className="text-accent font-medium">24%</span>
-                </div>
-                <Progress value={24} className="h-1 bg-white/5" indicatorClassName="bg-accent" />
-              </div>
+              ))}
 
               <div className="pt-4 border-t border-white/5">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Recent Alerts</h4>
                 <div className="space-y-4">
-                  {[
-                    { type: 'File Blocked', target: 'invoice.pdf.exe', time: '2m ago' },
-                    { type: 'Phishing Detected', target: 'login-secure.xyz', time: '15m ago' },
-                  ].map((alert, i) => (
+                  {RECENT_ALERTS.map((alert, i) => (
                     <div key={i} className="flex gap-3 items-center">
                       <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
                       <div className="flex-1 min-w-0">

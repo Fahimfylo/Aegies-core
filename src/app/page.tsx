@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, ShieldCheck, Zap, Lock, Globe, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shield, ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { FEATURES, NAV_LINKS } from "@/constants";
 
 export default function LandingPage() {
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-shield');
@@ -23,9 +24,9 @@ export default function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-8">
             <nav className="flex gap-6 text-sm font-medium text-muted-foreground">
-              <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
-              <Link href="#solutions" className="hover:text-primary transition-colors">Solutions</Link>
-              <Link href="#about" className="hover:text-primary transition-colors">About</Link>
+              {NAV_LINKS.map((link) => (
+                <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">{link.label}</Link>
+              ))}
             </nav>
             <Button asChild variant="default" className="bg-primary hover:bg-primary/90 text-white px-6">
               <Link href="/dashboard">Access Platform</Link>
@@ -103,26 +104,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Secure Binary Sentry",
-                desc: "Validates MIME signatures against file extensions to detect 'photo.jpg.exe' style trojans.",
-                icon: Zap,
-                color: "text-primary"
-              },
-              {
-                title: "AI Risk Assessment",
-                desc: "Uses advanced generative models to interpret suspicious URLs and domain history.",
-                icon: Globe,
-                color: "text-accent"
-              },
-              {
-                title: "Heuristic Radar",
-                desc: "Generates deep-level risk scores (0-100) based on multiple defensive detection vectors.",
-                icon: Lock,
-                color: "text-green-500"
-              }
-            ].map((feature, i) => (
+            {FEATURES.map((feature, i) => (
               <Card key={i} className="glass-dark border-white/5 hover:border-primary/50 transition-all duration-300">
                 <CardContent className="pt-10 pb-8 px-8 space-y-4">
                   <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center ${feature.color}`}>
