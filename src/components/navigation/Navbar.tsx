@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, LayoutDashboard, Search, History, BookOpen, Settings } from "lucide-react";
+import { Shield, LayoutDashboard, Search, History, BookOpen } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -13,8 +14,31 @@ const navItems = [
   { name: "Threat Intel", href: "/threat-intel", icon: BookOpen },
 ];
 
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+const avatarColors = [
+  "from-primary to-accent",
+  "from-blue-500 to-cyan-500",
+  "from-purple-500 to-pink-500",
+  "from-green-500 to-emerald-500",
+  "from-orange-500 to-red-500",
+];
+
+function getAvatarColor(id: string) {
+  const index = id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return avatarColors[index % avatarColors.length];
+}
+
 export default function Navbar() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-dark border-b border-white/10 h-16">
@@ -47,12 +71,16 @@ export default function Navbar() {
           })}
         </div>
 
-        <div className="flex items-center gap-4">
-          <Link href="/settings" className="p-2 text-muted-foreground hover:text-primary transition-colors">
-            <Settings className="w-5 h-5" />
-          </Link>
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-accent" />
-        </div>
+        <Link
+          href="/settings"
+          className={`h-9 w-9 rounded-full bg-gradient-to-br ${getAvatarColor(user?.id || "")} flex items-center justify-center text-white text-sm font-bold overflow-hidden hover:ring-2 hover:ring-primary/50 transition-all flex-shrink-0`}
+        >
+          {user?.image ? (
+            <img src={user.image} alt="" className="w-full h-full object-cover" />
+          ) : (
+            getInitials(user?.name || "U")
+          )}
+        </Link>
       </div>
     </nav>
   );

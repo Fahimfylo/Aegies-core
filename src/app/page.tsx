@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, ShieldCheck, ArrowRight } from "lucide-react";
+import { Shield, ShieldCheck, ArrowRight, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FEATURES, NAV_LINKS } from "@/constants";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LandingPage() {
+  const { user, loading } = useAuth();
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-shield');
 
   return (
@@ -28,9 +30,15 @@ export default function LandingPage() {
                 <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">{link.label}</Link>
               ))}
             </nav>
-            <Button asChild variant="default" className="bg-primary hover:bg-primary/90 text-white px-6">
-              <Link href="/dashboard">Access Platform</Link>
-            </Button>
+                {user ? (
+                  <Button asChild size="lg" className="h-14 px-10 bg-primary hover:bg-primary/90">
+                    <Link href="/dashboard"><LayoutDashboard className="w-5 h-5 mr-2" /> Dashboard</Link>
+                  </Button>
+                ) : (
+                  <Button asChild size="lg" className="h-14 px-10 bg-primary hover:bg-primary/90">
+                    <Link href="/sign-up">Get Started for Free</Link>
+                  </Button>
+                )}
           </div>
         </div>
       </header>
@@ -56,11 +64,19 @@ export default function LandingPage() {
               Detect Trojans, evaluate suspicious binaries, and analyze phishing vectors with our military-grade defensive architecture.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
-                <Link href="/dashboard" className="flex items-center gap-2">
-                  Launch Dashboard <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
+              {user ? (
+                <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    Go to Dashboard <LayoutDashboard className="w-4 h-4" />
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
+                  <Link href="/sign-up" className="flex items-center gap-2">
+                    Launch Dashboard <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+              )}
               <Button size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
                 View Documentation
               </Button>
@@ -132,7 +148,19 @@ export default function LandingPage() {
                 Join thousands of security professionals using AegisCore to analyze potential threats in isolated environments.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="h-14 px-10 bg-primary hover:bg-primary/90">Get Started for Free</Button>
+                {user ? (
+                  <Button asChild size="lg" className="h-14 px-10 bg-primary hover:bg-primary/90">
+                    <Link href="/dashboard" className="flex items-center gap-2">
+                      Go to Dashboard <LayoutDashboard className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild size="lg" className="h-14 px-10 bg-primary hover:bg-primary/90">
+                    <Link href="/sign-up" className="flex items-center gap-2">
+                      Launch Dashboard <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                )}
                 <Button size="lg" variant="outline" className="h-14 px-10 border-white/10 hover:bg-white/5">Schedule Demo</Button>
               </div>
             </div>

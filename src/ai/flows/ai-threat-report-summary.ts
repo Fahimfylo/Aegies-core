@@ -70,7 +70,7 @@ Scan Type: {{{scanType}}}
 Timestamp: {{{timestamp}}}
 Risk Score: {{{riskScore}}}/100 (Level: {{{riskLevel}}})
 
-{{#ifEq scanType "file"}}
+{{#if fileDetails.fileName}}
   File Name: {{{fileDetails.fileName}}}
   SHA256 Hash: {{{fileDetails.fileHash}}}
   File Size: {{{fileDetails.fileSize}}} bytes
@@ -105,7 +105,7 @@ Risk Score: {{{riskScore}}}/100 (Level: {{{riskLevel}}})
   VirusTotal Summary: {{{fileDetails.virusTotalResultsSummary}}}
   {{/if}}
 
-{{else ifEq scanType "url"}}
+{{else}}
   URL: {{{urlDetails.url}}}
 
   {{#if urlDetails.isPhishingDetected}}
@@ -130,7 +130,7 @@ Risk Score: {{{riskScore}}}/100 (Level: {{{riskLevel}}})
   - {{{this}}}
   {{/each}}
   {{/if}}
-{{/ifEq}}
+{{/if}}
 
 Based on the above scan data, provide the following in JSON format:
 `,

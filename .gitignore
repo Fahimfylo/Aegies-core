@@ -43,3 +43,8 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# dev logs
+dev_out.txt
+dev_server.log
+dev_server_error.log

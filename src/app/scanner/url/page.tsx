@@ -26,6 +26,25 @@ export default function UrlScanner() {
     try {
       const scanResult = await aiUrlRiskAssessment({ url });
       setResult(scanResult);
+
+      try {
+        await fetch("/api/history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "url",
+            target: url,
+            riskScore: scanResult.riskScore.score,
+            riskLevel: scanResult.riskScore.level,
+            urlDetails: {
+              overallAssessment: scanResult.overallAssessment,
+              phishingThreats: scanResult.phishingThreats,
+              domainReputation: scanResult.domainReputation,
+              defensiveActions: scanResult.defensiveActions,
+            },
+          }),
+        });
+      } catch {}
     } catch (error) {
       toast({
         title: "Scan Failed",

@@ -1,9 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useState, useRef } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { User, Shield, Lock, Database, Save, RefreshCcw, Download, Terminal } from "lucide-react";
+import { User, Shield, Lock, Database, Save, RefreshCcw, Download, Terminal, Camera, LogOut } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,19 +13,68 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+const avatarColors = [
+  "from-primary to-accent",
+  "from-blue-500 to-cyan-500",
+  "from-purple-500 to-pink-500",
+  "from-green-500 to-emerald-500",
+  "from-orange-500 to-red-500",
+];
+
+function getAvatarColor(id: string) {
+  const index = id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return avatarColors[index % avatarColors.length];
+}
+
 export default function Settings() {
+  const { user, updateProfile, logout } = useAuth();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState(user?.name || "");
+  const [image, setImage] = useState(user?.image || "");
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Invalid file", description: "Please select an image file.", variant: "destructive" });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setImage(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
+    const result = await updateProfile({ name, image });
+    if (result.ok) {
       toast({
         title: "Configuration Updated",
         description: "Your security preferences have been synchronized with the AegisCore cloud.",
       });
-    }, 1500);
+    } else {
+      toast({
+        title: "Update Failed",
+        description: result.error || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+    setIsSaving(false);
   };
 
   const handleExport = () => {
@@ -47,8 +97,28 @@ export default function Settings() {
           {/* Profile Section */}
           <Card className="glass-dark border-white/5">
             <CardHeader className="flex flex-row items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                <User className="w-6 h-6 text-primary" />
+              <div className="relative group">
+                <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${getAvatarColor(user?.id || "")} flex items-center justify-center text-white font-bold text-lg overflow-hidden`}>
+                  {user?.image || image ? (
+                    <img src={image || user?.image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    getInitials(user?.name || "U")
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                >
+                  <Camera className="w-5 h-5 text-white" />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
               </div>
               <div>
                 <CardTitle className="text-xl">Agent Profile</CardTitle>
@@ -59,16 +129,21 @@ export default function Settings() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="agent-name">Display Name</Label>
-                  <Input id="agent-name" placeholder="Agent Smith" className="bg-white/5 border-white/10" />
+                  <Input
+                    id="agent-name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="bg-white/5 border-white/10"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="agent-id">Tactical ID</Label>
-                  <Input id="agent-id" value="AC-9920-X" readOnly className="bg-white/5 border-white/10 text-muted-foreground" />
+                  <Input id="agent-id" value={user?.id || ""} readOnly className="bg-white/5 border-white/10 text-muted-foreground font-mono text-xs" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Encrypted Communication Email</Label>
-                <Input id="email" type="email" placeholder="agent@aegiscore.def" className="bg-white/5 border-white/10" />
+                <Input id="email" type="email" value={user?.email || ""} readOnly className="bg-white/5 border-white/10" />
               </div>
             </CardContent>
           </Card>
@@ -162,6 +237,15 @@ export default function Settings() {
                   <p className="text-xs text-muted-foreground">Permanently delete all temporary local scan artifacts.</p>
                 </div>
                 <Button variant="outline" className="border-destructive/20 text-destructive hover:bg-destructive/10">Purge Data</Button>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">End Session</p>
+                  <p className="text-xs text-muted-foreground">Sign out of your account and return to the landing page.</p>
+                </div>
+                <Button onClick={logout} variant="outline" className="border-destructive/20 text-destructive hover:bg-destructive/10 gap-2">
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </Button>
               </div>
             </CardContent>
           </Card>

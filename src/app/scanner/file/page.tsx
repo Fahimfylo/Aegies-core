@@ -45,9 +45,10 @@ export default function FileScanner() {
 
     setTimeout(async () => {
       const heuristicResult = analyzeFileHeuristics(file);
+      let scanResult: AnalysisResult | null = null;
 
       try {
-        const scanResult = await performAiScan(file, heuristicResult);
+        scanResult = await performAiScan(file, heuristicResult);
         setResult(scanResult);
       } catch {
         toast({
@@ -64,6 +65,46 @@ export default function FileScanner() {
           riskLevel: heuristicResult.riskLevel,
           findings: heuristicResult.findings,
         });
+        scanResult = {
+          fileName: file.name,
+          fileSize: file.size,
+          extension: heuristicResult.extension,
+          hash: SIMULATED_HASH,
+          riskScore: heuristicResult.score,
+          riskLevel: heuristicResult.riskLevel,
+          findings: heuristicResult.findings,
+        };
+        setResult(scanResult);
+      }
+
+      if (scanResult) {
+        try {
+          await fetch("/api/history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type: "file",
+              target: file.name,
+              riskScore: scanResult.riskScore,
+              riskLevel: scanResult.riskLevel,
+              fileDetails: {
+                fileName: scanResult.fileName,
+                fileSize: scanResult.fileSize,
+                declaredExtension: scanResult.extension,
+                doubleExtensionDetected: heuristicResult.isDoubleExtension,
+                dangerousExtension: heuristicResult.isDangerous,
+                hash: scanResult.hash,
+                findings: scanResult.findings,
+              },
+              aiSummary: scanResult.aiSummary ? {
+                summary: scanResult.aiSummary.summary,
+                detectedThreats: scanResult.aiSummary.detectedThreats,
+                implications: scanResult.aiSummary.implications,
+                recommendations: scanResult.aiSummary.recommendations,
+              } : undefined,
+            }),
+          });
+        } catch {}
       }
 
       setIsScanning(false);
