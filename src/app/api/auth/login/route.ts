@@ -6,14 +6,14 @@ import { signToken } from "@/lib/jwt";
 
 export async function POST(req: NextRequest) {
   try {
+    const dbPromise = connectDB();
     const { email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    await connectDB();
-
+    await dbPromise;
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });

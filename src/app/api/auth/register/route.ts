@@ -6,6 +6,7 @@ import { signToken } from "@/lib/jwt";
 
 export async function POST(req: NextRequest) {
   try {
+    const dbPromise = connectDB();
     const { name, email, password } = await req.json();
 
     if (!name || !email || !password) {
@@ -16,14 +17,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 });
     }
 
-    await connectDB();
-
+    await dbPromise;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword });
 
     const token = await signToken({ userId: user._id.toString(), email: user.email });
