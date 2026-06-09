@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { Search, ArrowUpRight, ArrowDownRight, Shield, AlertTriangle, CheckCircle, Activity, Loader2 } from "lucide-react";
+import { Search, ArrowUpRight, ArrowDownRight, Shield, AlertTriangle, CheckCircle, Activity, Loader2, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
@@ -11,6 +11,8 @@ import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, A
 interface DashboardData {
   stats: {
     totalScans: number;
+    fileScans: number;
+    urlScans: number;
     threatsBlocked: number;
     safeItems: number;
     avgRisk: number;
@@ -25,12 +27,13 @@ interface DashboardData {
 
 const statCards = [
   {
-    label: "Total Files Scanned",
+    label: "Total Scans",
     key: "totalScans" as const,
     icon: Shield,
     format: (v: number) => v.toLocaleString(),
     color: "text-primary",
     trendKey: null as null,
+    sub: (d: DashboardData) => `${d.stats.fileScans} file, ${d.stats.urlScans} url`,
   },
   {
     label: "Threats Blocked",
@@ -61,9 +64,10 @@ const statCards = [
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchDashboard = useCallback(async () => {
-    setLoading(true);
+  const fetchDashboard = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await fetch("/api/dashboard");
       if (res.ok) {
@@ -72,11 +76,20 @@ export default function Dashboard() {
     } catch {
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
     fetchDashboard();
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        fetchDashboard(true);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [fetchDashboard]);
 
   return (
@@ -94,6 +107,13 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-3">
+            <button
+              onClick={() => { setRefreshing(true); fetchDashboard(true); }}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 text-muted-foreground rounded-lg hover:bg-white/10 transition-all font-medium text-sm border border-white/10"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            </button>
             <Link href="/scanner/file">
               <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-medium text-sm">
                 <Search className="w-4 h-4" /> New File Scan
@@ -130,6 +150,7 @@ export default function Dashboard() {
                       </div>
                       <div className="space-y-1">
                         <p className="text-2xl font-bold font-headline">{stat.format(value)}</p>
+                        {"sub" in stat && data && <p className="text-xs text-muted-foreground">{stat.sub!(data)}</p>}
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">{stat.label}</p>
                       </div>
                     </CardContent>
@@ -145,9 +166,9 @@ export default function Dashboard() {
                   <CardDescription>Daily scanning volume vs. detected threats</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px] w-full pt-4">
-                  {data.chartData.length > 0 ? (
+                  {data.chartData.some(d => d.scans > 0) ? (
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={data.chartData}>
+                      <AreaChart data={data.chartData} margin={{ top: 20, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                           <linearGradient id="colorScans" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
@@ -155,19 +176,37 @@ export default function Dashboard() {
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
-                        <XAxis dataKey="name" stroke="#ffffff30" fontSize={12} />
-                        <YAxis stroke="#ffffff30" fontSize={12} />
+                        <XAxis dataKey="name" stroke="#ffffff30" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="#ffffff30" fontSize={12} tickLine={false} axisLine={false} />
                         <Tooltip
-                          contentStyle={{ backgroundColor: '#0A0C16', borderColor: '#ffffff10' }}
+                          contentStyle={{ backgroundColor: '#0A0C16', borderColor: '#ffffff10', borderRadius: 8 }}
                           itemStyle={{ color: '#fff' }}
+                          labelStyle={{ color: '#9CA3AF', fontSize: 12 }}
                         />
-                        <Area type="monotone" dataKey="scans" stroke="#3B82F6" fillOpacity={1} fill="url(#colorScans)" />
-                        <Area type="monotone" dataKey="threats" stroke="#8B5CF6" fill="transparent" />
+                        <Area
+                          type="monotone"
+                          dataKey="scans"
+                          stroke="#3B82F6"
+                          strokeWidth={2}
+                          fillOpacity={1}
+                          fill="url(#colorScans)"
+                          dot={{ r: 4, fill: "#3B82F6", stroke: "#0A0C16", strokeWidth: 2 }}
+                          label={{ position: "top", fill: "#9CA3AF", fontSize: 11, offset: 5 }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="threats"
+                          stroke="#EF4444"
+                          strokeWidth={2}
+                          fill="transparent"
+                          dot={{ r: 4, fill: "#EF4444", stroke: "#0A0C16", strokeWidth: 2 }}
+                          label={{ position: "top", fill: "#EF4444", fontSize: 11, offset: 5 }}
+                        />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-                      No scan data yet
+                      No scan data for the last 7 days
                     </div>
                   )}
                 </CardContent>
@@ -189,32 +228,51 @@ export default function Dashboard() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-muted-foreground">Threat Detection Rate</span>
-                      <span className="text-primary font-medium">
+                      <span className="text-destructive font-medium">
                         {data.stats.totalScans > 0
                           ? `${Math.round((data.stats.threatsBlocked / data.stats.totalScans) * 100)}%`
-                          : "N/A"}
+                          : "—"}
                       </span>
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>{data.stats.threatsBlocked}/{data.stats.totalScans} threats</span>
+                      <span>{data.stats.totalScans} total scans</span>
                     </div>
                     <Progress
                       value={data.stats.totalScans > 0 ? Math.round((data.stats.threatsBlocked / data.stats.totalScans) * 100) : 0}
                       className="h-1 bg-white/5"
-                      indicatorClassName="bg-primary"
+                      indicatorClassName="bg-destructive"
                     />
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-muted-foreground">Safe Rate</span>
-                      <span className="text-accent font-medium">
+                      <span className="text-green-500 font-medium">
                         {data.stats.totalScans > 0
                           ? `${Math.round((data.stats.safeItems / data.stats.totalScans) * 100)}%`
-                          : "N/A"}
+                          : "—"}
                       </span>
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>{data.stats.safeItems}/{data.stats.totalScans} safe</span>
+                      <span>{data.stats.totalScans} total scans</span>
                     </div>
                     <Progress
                       value={data.stats.totalScans > 0 ? Math.round((data.stats.safeItems / data.stats.totalScans) * 100) : 0}
                       className="h-1 bg-white/5"
-                      indicatorClassName="bg-accent"
+                      indicatorClassName="bg-green-500"
                     />
+                  </div>
+                  <div className="pt-4 border-t border-white/5 space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">By Scan Type</h4>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">File Scans</span>
+                      <span className="font-medium">{data.stats.fileScans}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">URL Scans</span>
+                      <span className="font-medium">{data.stats.urlScans}</span>
+                    </div>
                   </div>
 
                   {data.alerts.length > 0 && (

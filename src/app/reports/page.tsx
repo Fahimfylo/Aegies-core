@@ -145,7 +145,7 @@ export default function Reports() {
             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
           </div>
         ) : records.length === 0 ? (
-          <div className="text-center py-20 text-muted-foreground text-6xl leading-relaxed max-w-4xl mx-auto px-4">
+          <div className="text-center py-20 text-muted-foreground text-3xl leading-relaxed max-w-4xl mx-auto px-4">
             No scan records yet. Run a file or URL scan to populate your history.
           </div>
         ) : (

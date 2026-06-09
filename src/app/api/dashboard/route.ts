@@ -23,16 +23,20 @@ export async function GET(req: NextRequest) {
     );
 
     const totalScans = allRecords.length;
+    const fileScans = allRecords.filter((r) => r.type === "file").length;
+    const urlScans = allRecords.filter((r) => r.type === "url").length;
     const threatsBlocked = allRecords.filter((r) =>
-      ["High", "Critical"].includes(r.riskLevel)
+      ["Medium", "High", "Critical"].includes(r.riskLevel)
     ).length;
-    const safeItems = allRecords.filter((r) => r.riskLevel === "Safe").length;
+    const safeItems = allRecords.filter((r) =>
+      ["Safe", "Low"].includes(r.riskLevel)
+    ).length;
 
     const recentThreats = recentRecords.filter((r) =>
-      ["High", "Critical"].includes(r.riskLevel)
+      ["Medium", "High", "Critical"].includes(r.riskLevel)
     ).length;
     const prevThreats = prevRecords.filter((r) =>
-      ["High", "Critical"].includes(r.riskLevel)
+      ["Medium", "High", "Critical"].includes(r.riskLevel)
     ).length;
 
     const avgRisk =
@@ -40,8 +44,12 @@ export async function GET(req: NextRequest) {
         ? Math.round(allRecords.reduce((s, r) => s + r.riskScore, 0) / totalScans)
         : 0;
 
-    const recentSafe = recentRecords.filter((r) => r.riskLevel === "Safe").length;
-    const prevSafe = prevRecords.filter((r) => r.riskLevel === "Safe").length;
+    const recentSafe = recentRecords.filter((r) =>
+      ["Safe", "Low"].includes(r.riskLevel)
+    ).length;
+    const prevSafe = prevRecords.filter((r) =>
+      ["Safe", "Low"].includes(r.riskLevel)
+    ).length;
 
     const trendThreats = recentThreats > prevThreats ? "+" : "-";
     const threatDiff = prevThreats > 0 ? Math.round(Math.abs(recentThreats - prevThreats) / prevThreats * 100) : recentThreats * 100;
@@ -61,7 +69,7 @@ export async function GET(req: NextRequest) {
       chartData.push({
         name: dayStr,
         scans: dayScans.length,
-        threats: dayScans.filter((r) => ["High", "Critical"].includes(r.riskLevel)).length,
+        threats: dayScans.filter((r) => ["Medium", "High", "Critical"].includes(r.riskLevel)).length,
       });
     }
 
@@ -82,6 +90,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       stats: {
         totalScans,
+        fileScans,
+        urlScans,
         threatsBlocked,
         safeItems,
         avgRisk,
