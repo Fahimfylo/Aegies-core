@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { Search, Download, Trash2, FileText, Globe, Trash, Loader2 } from "lucide-react";
+import { Search, Download, Trash2, FileText, Globe, Trash, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,22 +20,28 @@ interface HistoryRecord {
   createdAt: string;
 }
 
+const PAGE_SIZE = 10;
+
 export default function Reports() {
   const [records, setRecords] = useState<HistoryRecord[]>([]);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const { toast } = useToast();
 
-  const fetchHistory = useCallback(async () => {
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  const fetchHistory = useCallback(async (pageNum = 0) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/history");
+      const res = await fetch(`/api/history?limit=${PAGE_SIZE}&skip=${pageNum * PAGE_SIZE}`);
       if (res.ok) {
         const data = await res.json();
         setRecords(data.records);
         setTotal(data.total);
+        setPage(pageNum);
       }
     } catch {
       toast({ title: "Error", description: "Failed to load scan history.", variant: "destructive" });
@@ -45,7 +51,7 @@ export default function Reports() {
   }, [toast]);
 
   useEffect(() => {
-    fetchHistory();
+    fetchHistory(0);
   }, [fetchHistory]);
 
   const toggleAll = () => {
@@ -75,7 +81,7 @@ export default function Reports() {
       if (res.ok) {
         toast({ title: "Deleted", description: `${selected.size} record(s) removed.` });
         setSelected(new Set());
-        fetchHistory();
+        fetchHistory(page);
       } else {
         toast({ title: "Error", description: "Failed to delete records.", variant: "destructive" });
       }
@@ -92,7 +98,7 @@ export default function Reports() {
       if (res.ok) {
         toast({ title: "Deleted", description: "Record removed." });
         setSelected((prev) => { const next = new Set(prev); next.delete(id); return next; });
-        fetchHistory();
+        fetchHistory(page);
       }
     } catch {
       toast({ title: "Error", description: "Failed to delete record.", variant: "destructive" });
@@ -134,40 +140,36 @@ export default function Reports() {
           </div>
         </div>
 
-        <Card className="glass-dark border-white/5 overflow-hidden">
-          <Table>
-            <TableHeader className="bg-white/5">
-              <TableRow className="border-white/5 hover:bg-transparent">
-                <TableHead className="w-10">
-                  <Checkbox
-                    checked={records.length > 0 && selected.size === records.length}
-                    onCheckedChange={toggleAll}
-                    className="border-white/30"
-                  />
-                </TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Target</TableHead>
-                <TableHead>Date Analyzed</TableHead>
-                <TableHead>Risk Level</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground" />
-                  </TableCell>
+        {loading && records.length === 0 ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : records.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground text-sm">
+            No scan records yet. Run a file or URL scan to populate your history.
+          </div>
+        ) : (
+          <Card className="glass-dark border-white/5 overflow-hidden">
+            <Table>
+              <TableHeader className="bg-white/5">
+                <TableRow className="border-white/5 hover:bg-transparent">
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={selected.size === records.length}
+                      onCheckedChange={toggleAll}
+                      className="border-white/30"
+                    />
+                  </TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Target</TableHead>
+                  <TableHead>Date Analyzed</TableHead>
+                  <TableHead>Risk Level</TableHead>
+                  <TableHead>Score</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ) : records.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12 text-muted-foreground text-sm">
-                    No scan records yet. Run a file or URL scan to populate your history.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                records.map((item) => (
+              </TableHeader>
+              <TableBody>
+                {records.map((item) => (
                   <TableRow key={item._id} className="border-white/5 hover:bg-white/5">
                     <TableCell>
                       <Checkbox
@@ -222,18 +224,47 @@ export default function Reports() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-          {!loading && records.length > 0 && (
-            <div className="p-4 bg-white/5 border-t border-white/5 text-center">
-              <button onClick={fetchHistory} className="text-xs font-bold text-primary hover:underline">
-                Refresh Archives
-              </button>
-            </div>
-          )}
-        </Card>
+                ))}
+              </TableBody>
+            </Table>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-4 border-t border-white/5">
+                <p className="text-xs text-muted-foreground">
+                  Showing {(page * PAGE_SIZE) + 1}-{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => fetchHistory(page - 1)}
+                    disabled={page === 0}
+                    className="p-2 rounded-md hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => fetchHistory(i)}
+                      className={`w-8 h-8 rounded-md text-xs font-medium transition-colors ${
+                        i === page
+                          ? "bg-primary text-white"
+                          : "text-muted-foreground hover:bg-white/10"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => fetchHistory(page + 1)}
+                    disabled={page >= totalPages - 1}
+                    className="p-2 rounded-md hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </Card>
+        )}
       </main>
     </div>
   );
