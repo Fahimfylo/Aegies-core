@@ -4,7 +4,7 @@ import type { AnalysisResult, ScanInput } from "@/types";
 
 export type HeuristicResult = {
   score: number;
-  riskLevel: AnalysisResult['riskLevel'];
+  riskLevel: 'Safe' | 'Low' | 'Medium' | 'High' | 'Critical';
   findings: string[];
   extension: string;
   isDoubleExtension: boolean;
@@ -38,11 +38,11 @@ export function analyzeFileHeuristics(file: File): HeuristicResult {
 }
 
 export async function performAiScan(file: File, heuristicResult: HeuristicResult): Promise<AnalysisResult> {
-  const scanInput: ScanInput = {
-    scanType: 'file',
+  const scanInput = {
+    scanType: 'file' as const,
     timestamp: new Date().toISOString(),
     riskScore: heuristicResult.score,
-    riskLevel: heuristicResult.riskLevel,
+    riskLevel: heuristicResult.riskLevel as 'Safe' | 'Low' | 'Medium' | 'High' | 'Critical',
     fileDetails: {
       fileName: file.name,
       fileSize: file.size,

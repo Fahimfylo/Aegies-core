@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, LayoutDashboard, Search, History, BookOpen } from "lucide-react";
+import { Shield, LayoutDashboard, Search, History, BookOpen, Activity, GraduationCap } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "SOC", href: "/soc-dashboard", icon: Activity },
   { name: "File Scanner", href: "/scanner/file", icon: Search },
   { name: "URL Scanner", href: "/scanner/url", icon: Search },
   { name: "History", href: "/reports", icon: History },
   { name: "Threat Intel", href: "/threat-intel", icon: BookOpen },
+  { name: "Training", href: "/security-training", icon: GraduationCap },
 ];
 
 function getInitials(name: string) {

@@ -3,3 +3,4 @@ export * from './reports';
 export * from './threat-intel';
 export * from './landing';
 export * from './scanner';
+export * from './security';
