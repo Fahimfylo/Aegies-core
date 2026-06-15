@@ -1,6 +1,23 @@
-const API_BASE = 'http://localhost:9002/api';
 const CACHE = new Map();
 const CACHE_TTL = 5 * 60 * 1000;
+const NOTIFICATION_ICON = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">' +
+  '<rect width="48" height="48" rx="8" fill="#0A0C16"/>' +
+  '<path d="M24 6L8 12v10.5C8 31 13.5 39 24 42c10.5-3 16-11 16-19.5V12L24 6z" fill="#3B82F6" opacity="0.9"/>' +
+  '<path d="M19 24l4 4 8-8" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+  '</svg>'
+);
+
+async function getSettings() {
+  const { apiUrl, disabled, notificationsDisabled } = await chrome.storage.local.get([
+    'apiUrl', 'disabled', 'notificationsDisabled'
+  ]);
+  return {
+    apiUrl: apiUrl || 'http://localhost:9002/api',
+    disabled: !!disabled,
+    notificationsDisabled: !!notificationsDisabled,
+  };
+}
 
 async function getAuthHeaders() {
   const { token } = await chrome.storage.local.get('token');
@@ -9,9 +26,10 @@ async function getAuthHeaders() {
 }
 
 async function apiPost(path, body) {
+  const { apiUrl } = await getSettings();
   const headers = await getAuthHeaders();
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`${apiUrl}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...headers },
       body: JSON.stringify(body),
@@ -30,9 +48,10 @@ async function apiPost(path, body) {
 }
 
 async function apiGet(path) {
+  const { apiUrl } = await getSettings();
   const headers = await getAuthHeaders();
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`${apiUrl}${path}`, {
       headers: { ...headers },
     });
     if (!res.ok) {
@@ -115,13 +134,16 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     data: result,
   }).catch(() => {});
 
-  chrome.notifications.create({
-    type: 'basic',
-    iconUrl: 'icons/icon48.svg',
-    title: 'AegisCore Security Alert',
-    message: `${result.classification === 'malicious' ? 'Dangerous' : 'Suspicious'} site detected: ${url.hostname}`,
-    priority: 2,
-  });
+  const { notificationsDisabled } = await getSettings();
+  if (!notificationsDisabled) {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: NOTIFICATION_ICON,
+      title: 'AegisCore Security Alert',
+      message: `${result.classification === 'malicious' ? 'Dangerous' : 'Suspicious'} site detected: ${url.hostname}`,
+      priority: 2,
+    });
+  }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -181,15 +203,18 @@ chrome.contextMenus.create({
   contexts: ['page'],
 });
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  const { notificationsDisabled } = await getSettings();
+
   if (info.menuItemId === 'scan-url' && info.linkUrl) {
     checkUrl(info.linkUrl).then((result) => {
       if (!result) return;
+      if (notificationsDisabled) return;
       const status = result.classification === 'malicious' ? 'DANGEROUS' :
         result.classification === 'suspicious' ? 'SUSPICIOUS' : 'SAFE';
       chrome.notifications.create({
         type: 'basic',
-        iconUrl: 'icons/icon48.svg',
+        iconUrl: NOTIFICATION_ICON,
         title: `AegisCore: ${status}`,
         message: `${info.linkUrl}\nConfidence: ${result.confidenceScore}%`,
         priority: result.classification === 'malicious' ? 2 : 1,
@@ -199,11 +224,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'scan-page' && tab?.url) {
     checkUrl(tab.url).then((result) => {
       if (!result) return;
+      if (notificationsDisabled) return;
       const status = result.classification === 'malicious' ? 'DANGEROUS' :
         result.classification === 'suspicious' ? 'SUSPICIOUS' : 'SAFE';
       chrome.notifications.create({
         type: 'basic',
-        iconUrl: 'icons/icon48.svg',
+        iconUrl: NOTIFICATION_ICON,
         title: `AegisCore: ${status}`,
         message: `${new URL(tab.url).hostname}\nConfidence: ${result.confidenceScore}%`,
         priority: result.classification === 'malicious' ? 2 : 1,
