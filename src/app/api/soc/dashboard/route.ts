@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/jwt';
+import { verifyToken, extractToken } from '@/lib/jwt';
 import { connectDB } from '@/lib/db';
 import { ScanRecord } from '@/lib/models/ScanRecord';
 import type { SocDashboardData, SocAlert, MitreAttackMapping, IncidentEvent, HeatmapDataPoint, SocSummary } from '@/types/security/soc';
@@ -56,7 +56,7 @@ function generateHeatmap(): HeatmapDataPoint[] {
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get('token')?.value;
+    const token = extractToken(req);
     if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     await verifyToken(token);
 

@@ -1,4 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
+import type { NextRequest } from "next/server";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
@@ -17,4 +18,12 @@ export async function signToken(payload: { userId: string; email: string }) {
 export async function verifyToken(token: string) {
   const { payload } = await jwtVerify(token, secret);
   return payload as { userId: string; email: string; iat: number; exp: number };
+}
+
+export function extractToken(req: NextRequest): string | undefined {
+  const cookieToken = req.cookies.get("token")?.value;
+  if (cookieToken) return cookieToken;
+  const authHeader = req.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) return authHeader.slice(7);
+  return undefined;
 }

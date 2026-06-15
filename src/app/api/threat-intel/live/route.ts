@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/jwt';
+import { verifyToken, extractToken } from '@/lib/jwt';
 import { getLiveThreatFeed, getThreatFeedSummary } from '@/services/security/threat-intel.service';
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get('token')?.value;
+    const token = extractToken(req);
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
+import { verifyToken, extractToken } from "@/lib/jwt";
 import { connectDB } from "@/lib/db";
 import { ScanRecord } from "@/lib/models/ScanRecord";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = extractToken(req);
     if (!token) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = extractToken(req);
     if (!token) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = extractToken(req);
     if (!token) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }

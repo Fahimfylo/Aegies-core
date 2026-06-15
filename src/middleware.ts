@@ -16,9 +16,21 @@ function isPublicRoute(pathname: string) {
   return publicRoutes.some((route) => pathname === route || pathname.startsWith(route));
 }
 
+async function extractToken(req: NextRequest): Promise<string | undefined> {
+  const cookieToken = req.cookies.get("token")?.value;
+  if (cookieToken) return cookieToken;
+
+  const authHeader = req.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7);
+  }
+
+  return undefined;
+}
+
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = req.cookies.get("token")?.value;
+  const token = await extractToken(req);
 
   let authenticated = false;
   if (token) {

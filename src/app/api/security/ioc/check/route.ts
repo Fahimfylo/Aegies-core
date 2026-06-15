@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/jwt';
 import { checkIOC } from '@/services/security';
 
+function extractToken(req: NextRequest): string | undefined {
+  const cookieToken = req.cookies.get('token')?.value;
+  if (cookieToken) return cookieToken;
+  const authHeader = req.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) return authHeader.slice(7);
+  return undefined;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get('token')?.value;
+    const token = extractToken(req);
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }

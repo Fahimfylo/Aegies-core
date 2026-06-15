@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisCore Extension Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 24px;
+      background: #0A0C16;
+      color: #E5E7EB;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    h1 { font-size: 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+    h1 span { color: #3B82F6; }
+    .group {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .group h2 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .field .desc { font-size: 11px; color: #6B7280; margin-bottom: 6px; }
+    input[type="text"], input[type="url"], textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: #E5E7EB;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus, textarea:focus { border-color: #3B82F6; }
+    textarea { resize: vertical; min-height: 80px; font-family: monospace; font-size: 12px; }
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .checkbox-field input[type="checkbox"] {
+      width: 18px; height: 18px;
+      accent-color: #3B82F6;
+    }
+    .btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: #3B82F6; color: #fff; }
+    .btn-primary:hover { background: #2563EB; }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: #E5E7EB; border: 1px solid rgba(255,255,255,0.1); margin-left: 8px; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+    .btn-danger { background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover { background: rgba(239,68,68,0.25); }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .toast.success { background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.3); color: #22C55E; }
+    .toast.error { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.3); color: #EF4444; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .actions { display: flex; align-items: center; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🛡 AEGIS<span>CORE</span> Settings</h1>
+
+  <div class="group">
+    <h2>API Configuration</h2>
+    <div class="field">
+      <label>API Base URL</label>
+      <div class="desc">The AegisCore server address</div>
+      <input type="url" id="apiUrl" placeholder="http://localhost:9002/api">
+    </div>
+  </div>
+
+  <div class="group">
+    <h2>Protection</h2>
+    <div class="checkbox-field">
+      <input type="checkbox" id="enableProtection" checked>
+      <label for="enableProtection">Enable real-time URL checking</label>
+    </div>
+    <div class="checkbox-field">
+      <input type="checkbox" id="enableNotifications" checked>
+      <label for="enableNotifications">Show desktop notifications for threats</label>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2>Whitelist</h2>
+    <div class="desc">Domains to skip scanning (one per line)</div>
+    <textarea id="whitelist" placeholder="example.com&#10;trusted-site.org"></textarea>
+  </div>
+
+  <div class="group">
+    <h2>Account</h2>
+    <div id="accountInfo" style="font-size:13px;color:#9CA3AF;">Checking authentication status...</div>
+    <div class="actions">
+      <button class="btn btn-danger" id="logoutBtn" style="display:none;">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="saveBtn">Save Settings</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

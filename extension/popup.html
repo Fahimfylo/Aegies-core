@@ -7,8 +7,8 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      width: 380px;
-      min-height: 300px;
+      width: 400px;
+      min-height: 350px;
       background: #0A0C16;
       color: #E5E7EB;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -17,28 +17,62 @@
     .header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       margin-bottom: 16px;
       padding-bottom: 12px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    .header h1 {
-      font-size: 16px;
-      font-weight: 700;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .header span { color: #3B82F6; }
-    .status {
+    .brand-icon {
+      width: 32px; height: 32px;
+      background: rgba(59,130,246,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .brand h1 { font-size: 16px; font-weight: 700; }
+    .brand span { color: #3B82F6; }
+    .header-actions { display: flex; gap: 6px; }
+    .icon-btn {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: #9CA3AF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.1); color: #E5E7EB; }
+    .section {
       padding: 12px;
       border-radius: 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
       margin-bottom: 12px;
     }
-    .status .label { font-size: 11px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; }
-    .status .value { font-size: 13px; font-weight: 600; margin-top: 2px; }
+    .section-title {
+      font-size: 11px;
+      color: #9CA3AF;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .value { font-size: 13px; font-weight: 600; margin-top: 2px; word-break: break-all; }
     .safe { color: #22C55E; }
     .warning { color: #F59E0B; }
     .danger { color: #EF4444; }
+    .info { color: #3B82F6; }
+    .muted { color: #6B7280; }
     .btn {
       display: block;
       width: 100%;
@@ -49,41 +83,176 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      margin-top: 8px;
+      text-align: center;
     }
     .btn-primary { background: #3B82F6; color: #fff; }
     .btn-primary:hover { background: #2563EB; }
-    .btn-secondary { background: rgba(255,255,255,0.1); color: #E5E7EB; border: 1px solid rgba(255,255,255,0.1); }
-    .btn-secondary:hover { background: rgba(255,255,255,0.15); }
-    .footer { margin-top: 16px; text-align: center; font-size: 10px; color: #6B7280; }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: #E5E7EB; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+    .btn-success { background: #22C55E; color: #fff; }
+    .btn-success:hover { background: #16A34A; }
+    .btn-warning { background: #F59E0B; color: #000; }
+    .btn-warning:hover { background: #D97706; }
+    .btn-danger { background: #EF4444; color: #fff; }
+    .btn-danger:hover { background: #DC2626; }
+    .btn-sm { padding: 6px 12px; width: auto; display: inline-block; font-size: 12px; }
+    .row { display: flex; gap: 8px; }
+    .row .btn { flex: 1; }
+    .input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: #E5E7EB;
+      font-size: 13px;
+      margin-bottom: 8px;
+      outline: none;
+    }
+    .input:focus { border-color: #3B82F6; }
+    .input::placeholder { color: #6B7280; }
+    textarea.input { resize: vertical; min-height: 60px; font-family: inherit; }
+    .tab-bar { display: flex; gap: 4px; margin-bottom: 12px; }
+    .tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: rgba(255,255,255,0.05);
+      color: #9CA3AF;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab:hover { color: #E5E7EB; }
+    .tab.active { background: rgba(59,130,246,0.15); color: #3B82F6; border-color: rgba(59,130,246,0.3); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .result-box {
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .result-box.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); }
+    .result-box.warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
+    .result-box.danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); }
+    .result-box.info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); }
+    .result-box-title { font-weight: 600; margin-bottom: 4px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      margin: 2px;
+    }
+    .tag.red { background: rgba(239,68,68,0.2); color: #EF4444; }
+    .tag.yellow { background: rgba(245,158,11,0.2); color: #F59E0B; }
+    .tag.green { background: rgba(34,197,94,0.2); color: #22C55E; }
+    .tag.blue { background: rgba(59,130,246,0.2); color: #3B82F6; }
+    .auth-form { text-align: center; padding: 20px 0; }
+    .auth-form h2 { font-size: 18px; margin-bottom: 4px; }
+    .auth-form p { font-size: 13px; color: #9CA3AF; margin-bottom: 16px; }
+    .auth-error { color: #EF4444; font-size: 12px; margin-bottom: 8px; display: none; }
+    .footer { margin-top: 12px; text-align: center; font-size: 10px; color: #6B7280; }
   </style>
 </head>
 <body>
   <div class="header">
-    <div style="width:32px;height:32px;background:rgba(59,130,246,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">🛡</div>
-    <h1>AEGIS<span>CORE</span></h1>
-  </div>
-
-  <div class="status">
-    <div class="label">Current Page</div>
-    <div class="value" id="currentPage">Loading...</div>
-  </div>
-
-  <div class="status">
-    <div class="label">Risk Assessment</div>
-    <div class="value" id="riskStatus">Checking...</div>
-  </div>
-
-  <div class="status">
-    <div class="label">Quick Actions</div>
-    <div class="value" style="margin-top: 8px;">
-      <button class="btn btn-primary" id="scanBtn">🔍 Scan Current URL</button>
-      <button class="btn btn-secondary" id="dashboardBtn">📊 Open AegisCore Dashboard</button>
+    <div class="brand">
+      <div class="brand-icon">🛡</div>
+      <h1>AEGIS<span>CORE</span></h1>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
+      <button class="icon-btn" id="refreshBtn" title="Refresh">↻</button>
     </div>
   </div>
 
-  <div class="footer">
-    AegisCore Security Guard v1.0.0 — Real-time phishing & malware protection
+  <!-- Auth View -->
+  <div id="authView">
+    <div class="auth-form">
+      <h2>Welcome to AegisCore</h2>
+      <p>Sign in to enable real-time security protection</p>
+      <div class="auth-error" id="authError">Invalid credentials</div>
+      <input class="input" id="loginEmail" type="email" placeholder="Email" autocomplete="email">
+      <input class="input" id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+      <button class="btn btn-primary" id="loginBtn">Sign In</button>
+      <div style="margin-top:12px;font-size:12px;color:#6B7280;">
+        Don't have an account?
+        <a href="http://localhost:9002/sign-up" target="_blank" style="color:#3B82F6;text-decoration:none;">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard View -->
+  <div id="dashboardView" style="display:none;">
+    <div class="tab-bar">
+      <div class="tab active" data-tab="overview">Overview</div>
+      <div class="tab" data-tab="scanner">Scanner</div>
+      <div class="tab" data-tab="email">Email</div>
+      <div class="tab" data-tab="breach">Breach</div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content active" id="tab-overview">
+      <div class="section">
+        <div class="section-title">Current Page</div>
+        <div class="value muted" id="currentPage">Loading...</div>
+      </div>
+      <div class="section">
+        <div class="section-title">Risk Assessment</div>
+        <div class="value" id="riskStatus">Checking...</div>
+      </div>
+      <div class="section">
+        <div class="section-title">Quick Actions</div>
+        <div style="margin-top:8px;">
+          <button class="btn btn-primary" id="scanCurrentBtn" style="margin-bottom:6px;">🔍 Re-scan Current URL</button>
+          <div class="row">
+            <button class="btn btn-secondary" id="dashboardBtn">📊 Dashboard</button>
+            <button class="btn btn-secondary" id="logoutBtn" style="color:#EF4444;">🚪 Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanner Tab -->
+    <div class="tab-content" id="tab-scanner">
+      <div class="section">
+        <div class="section-title">Website Security Scanner</div>
+        <input class="input" id="scanUrl" type="url" placeholder="Enter URL to scan (https://...)">
+        <button class="btn btn-primary" id="scanWebBtn">🔍 Scan Website</button>
+        <div id="scanWebResult"></div>
+      </div>
+    </div>
+
+    <!-- Email Tab -->
+    <div class="tab-content" id="tab-email">
+      <div class="section">
+        <div class="section-title">Email Phishing Analysis</div>
+        <input class="input" id="emailSender" type="text" placeholder="Sender email address">
+        <input class="input" id="emailSubject" type="text" placeholder="Email subject">
+        <textarea class="input" id="emailBody" placeholder="Email body content"></textarea>
+        <button class="btn btn-primary" id="scanEmailBtn">📧 Analyze Email</button>
+        <div id="scanEmailResult"></div>
+      </div>
+    </div>
+
+    <!-- Breach Tab -->
+    <div class="tab-content" id="tab-breach">
+      <div class="section">
+        <div class="section-title">Breach Exposure Check</div>
+        <input class="input" id="breachEmail" type="email" placeholder="Enter email address to check">
+        <button class="btn btn-danger" id="checkBreachBtn">🔓 Check for Breaches</button>
+        <div id="checkBreachResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer" id="footer">
+    AegisCore Security Guard v2.0.0 — Real-time phishing & malware protection
   </div>
 
   <script src="popup.js"></script>
