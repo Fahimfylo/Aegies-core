@@ -7,6 +7,7 @@ export const KNOWN_MALICIOUS_DOMAINS = [
   'evil.com', 'malware-host.net', 'phishing-bank.xyz',
   'free-prize.tk', 'secure-login.ml', 'update-paypal.ga',
   'download-movies.top', 'win-iphone.work',
+  'rtally.shop', 'spendsdetachment.com',
 ];
 
 export const KNOWN_MALICIOUS_HASHES = [

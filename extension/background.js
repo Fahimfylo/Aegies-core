@@ -1,6 +1,5 @@
 const CACHE = new Map();
 const CACHE_TTL = 5 * 60 * 1000;
-const NOTIFICATION_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAsUlEQVR4nO3WQQ7DIAxEUe7V2/WwOUK3dDURSpvEBBs80nzJ+zcbRClKKaXUb6/3Z1t58stvvVrrfkz+1n3cMOqP3HDmxnnYI/x37qx+qzubv9edxf/Uvdo/6vZ8e3r8Xm6cl9+ywdPtbb/ze7pn+73dM/0R7ln+KHeUv90Q6Y6yI2Z7z4asdsuG7ParDSz2fxvY7IjZXgb+16vdbcx2xGxHzHbEbEfMdsRsV0oppSL7AjqLRgMoRcH5AAAAAElFTkSuQmCC';
 
 async function getSettings() {
   const { apiUrl, disabled, notificationsDisabled } = await chrome.storage.local.get([
@@ -138,7 +137,6 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     try {
       await chrome.notifications.create({
         type: 'basic',
-        iconUrl: NOTIFICATION_ICON,
         title: 'AegisCore Security Alert',
         message: `${result.classification === 'malicious' ? 'Dangerous' : 'Suspicious'} site detected: ${url.hostname}`,
         priority: 2,
@@ -223,7 +221,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         result.classification === 'suspicious' ? 'SUSPICIOUS' : 'SAFE';
       chrome.notifications.create({
         type: 'basic',
-        iconUrl: NOTIFICATION_ICON,
         title: `AegisCore: ${status}`,
         message: `${info.linkUrl}\nConfidence: ${result.confidenceScore}%`,
         priority: result.classification === 'malicious' ? 2 : 1,
@@ -238,7 +235,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         result.classification === 'suspicious' ? 'SUSPICIOUS' : 'SAFE';
       chrome.notifications.create({
         type: 'basic',
-        iconUrl: NOTIFICATION_ICON,
         title: `AegisCore: ${status}`,
         message: `${new URL(tab.url).hostname}\nConfidence: ${result.confidenceScore}%`,
         priority: result.classification === 'malicious' ? 2 : 1,

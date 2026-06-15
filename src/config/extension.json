@@ -4,8 +4,8 @@
     "2.0.0": {
       "version": "2.0.0",
       "file": "extension-v2.0.0.zip",
-      "size": 14633,
-      "releaseDate": "2026-06-15T08:47:34.201Z",
+      "size": 14300,
+      "releaseDate": "2026-06-15T08:54:48.954Z",
       "changelog": [
         "Added authentication with JWT token storage",
         "Added toolbar badge showing threat level",
