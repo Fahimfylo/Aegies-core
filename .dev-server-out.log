@@ -1,0 +1,103 @@
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:9002
+   - Network:      http://192.168.0.130:9002
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 8.2s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1208ms (213 modules)
+ ○ Compiling /install-extension ...
+ ✓ Compiled /install-extension in 14.2s (696 modules)
+ ✓ Compiled in 2.4s (266 modules)
+ GET /install-extension 200 in 16831ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 2.3s (760 modules)
+ GET /api/auth/me 200 in 12980ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1920ms (1032 modules)
+ GET /settings 200 in 2613ms
+ GET /api/auth/me 200 in 188ms
+ GET /settings 200 in 173ms
+ GET /api/auth/me 200 in 80ms
+ ✓ Compiled in 1866ms (1046 modules)
+ GET /settings 200 in 338ms
+ GET /settings 200 in 384ms
+ GET /api/auth/me 200 in 144ms
+ GET /settings 200 in 156ms
+ GET /settings 200 in 141ms
+ GET /api/auth/me 200 in 112ms
+ ○ Compiling /api/extensions/download ...
+ ✓ Compiled /api/extensions/download in 727ms (1037 modules)
+ GET /api/extensions/download?version=2.0.0 200 in 888ms
+ GET /install-extension 200 in 142ms
+ ✓ Compiled in 1563ms (993 modules)
+ GET /settings 200 in 370ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1357ms (1005 modules)
+ GET / 200 in 1676ms
+ ✓ Compiled /api/extensions/download in 423ms (640 modules)
+ GET /api/extensions/download?version=2.0.0 200 in 767ms
+ GET /install-extension 200 in 181ms
+ ○ Compiling /dashboard ...
+ GET /dashboard 500 in 13112ms
+ GET /dashboard 500 in 1818ms
+ GET /dashboard 500 in 48ms
+ GET /dashboard 500 in 35ms
+ GET /dashboard 500 in 34ms
+ GET /dashboard 500 in 41ms
+ GET /dashboard 500 in 109ms
+ GET /dashboard 500 in 779ms
+ GET /dashboard 200 in 458ms
+ GET /dashboard 500 in 42ms
+ GET /dashboard 500 in 50ms
+ ✓ Compiled /_error in 4.1s (2411 modules)
+ GET /dashboard 200 in 243ms
+ GET /dashboard 200 in 197ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 3.6s (2477 modules)
+ GET /api/dashboard 200 in 5041ms
+ GET /api/auth/me 200 in 5718ms
+ GET /api/dashboard 200 in 91ms
+ GET / 200 in 127ms
+ GET /dashboard 200 in 63ms
+ GET /api/dashboard 200 in 87ms
+ GET /api/dashboard 200 in 100ms
+ GET /settings 200 in 58ms
+ GET /install-extension 200 in 139ms
+ GET /install-extension 200 in 111ms
+ GET /install-extension 200 in 108ms
+ GET /dashboard 200 in 46ms
+ GET /api/dashboard 200 in 87ms
+ GET /api/dashboard 200 in 95ms
+ GET / 200 in 53ms
+ GET /install-extension 200 in 97ms
+ GET /dashboard 200 in 64ms
+ GET /api/dashboard 200 in 110ms
+ GET /api/dashboard 200 in 99ms
+ GET /settings 200 in 47ms
+ ○ Compiling /api/auth/logout ...
+ ✓ Compiled /api/auth/logout in 1803ms (2476 modules)
+ POST /api/auth/logout 200 in 1952ms
+ GET / 200 in 134ms
+ ○ Compiling /sign-up/[[...sign-up]] ...
+ ✓ Compiled /sign-up/[[...sign-up]] in 1581ms (2485 modules)
+ GET /sign-up 200 in 3446ms
+ GET /sign-up?redirect=%2Finstall-extension 200 in 58ms
+ ○ Compiling /sign-in/[[...sign-in]] ...
+ ✓ Compiled /sign-in/[[...sign-in]] in 912ms (2492 modules)
+ GET /sign-in?redirect=%2Finstall-extension 200 in 2090ms
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 1816ms (2497 modules)
+ POST /api/auth/login 200 in 2137ms
+ GET /install-extension 200 in 274ms
+ GET /install-extension 200 in 112ms
+ GET /install-extension 200 in 205ms
+ GET /install-extension 200 in 113ms
+ GET /dashboard 200 in 57ms
+ GET /api/dashboard 200 in 98ms
+ GET /api/dashboard 200 in 86ms
+ GET /settings 200 in 59ms
+ GET /api/dashboard 200 in 85ms
+ GET /api/dashboard 200 in 76ms
+ GET / 200 in 70ms
