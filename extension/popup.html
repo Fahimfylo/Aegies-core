@@ -157,6 +157,21 @@
     .auth-form p { font-size: 13px; color: #9CA3AF; margin-bottom: 16px; }
     .auth-error { color: #EF4444; font-size: 12px; margin-bottom: 8px; display: none; }
     .footer { margin-top: 12px; text-align: center; font-size: 10px; color: #6B7280; }
+    .history-entry {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .history-entry .url { flex: 1; word-break: break-all; color: #9CA3AF; }
+    .history-entry .time { font-size: 10px; color: #6B7280; white-space: nowrap; }
+    .history-entry .status { font-weight: 600; font-size: 11px; white-space: nowrap; }
+    .history-empty { text-align: center; padding: 20px; color: #6B7280; font-size: 13px; }
   </style>
 </head>
 <body>
@@ -194,6 +209,7 @@
       <div class="tab" data-tab="scanner">Scanner</div>
       <div class="tab" data-tab="email">Email</div>
       <div class="tab" data-tab="breach">Breach</div>
+      <div class="tab" data-tab="history">History</div>
     </div>
 
     <!-- Overview Tab -->
@@ -247,6 +263,17 @@
         <input class="input" id="breachEmail" type="email" placeholder="Enter email address to check">
         <button class="btn btn-danger" id="checkBreachBtn">🔓 Check for Breaches</button>
         <div id="checkBreachResult"></div>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div class="tab-content" id="tab-history">
+      <div class="section">
+        <div class="section-title">Browsing History</div>
+        <div style="margin-bottom:8px;display:flex;gap:6px;">
+          <button class="btn btn-sm btn-warning" id="clearHistoryBtn">🗑 Clear History</button>
+        </div>
+        <div id="historyList"></div>
       </div>
     </div>
   </div>

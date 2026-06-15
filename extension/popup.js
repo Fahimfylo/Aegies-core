@@ -14,15 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tabs = document.querySelectorAll('.tab');
   const tabContents = document.querySelectorAll('.tab-content');
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tabContents.forEach(tc => tc.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
-    });
-  });
-
   settingsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
   refreshBtn.addEventListener('click', () => initPopup());
 
@@ -228,6 +219,53 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('loginPassword').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') loginBtn.click();
+  });
+
+  // History
+  const HISTORY_KEY = 'browsingHistory';
+
+  async function loadHistory() {
+    const { [HISTORY_KEY]: history = [] } = await chrome.storage.local.get(HISTORY_KEY);
+    const container = document.getElementById('historyList');
+    if (history.length === 0) {
+      container.innerHTML = '<div class="history-empty">No browsing history yet</div>';
+      return;
+    }
+    container.innerHTML = history.map((entry, i) => {
+      const statusClass = entry.classification === 'malicious' ? 'danger'
+        : entry.classification === 'suspicious' ? 'warning' : 'safe';
+      const statusLabel = entry.classification === 'malicious' ? '⚠ DANGEROUS'
+        : entry.classification === 'suspicious' ? '⚡ SUSPICIOUS' : '✅ Safe';
+      const time = new Date(entry.timestamp).toLocaleTimeString();
+      const date = new Date(entry.timestamp).toLocaleDateString();
+      return `<div class="history-entry">
+        <span class="status ${statusClass}">${statusLabel}</span>
+        <span class="url">${escapeHtml(entry.hostname)}</span>
+        <span class="time">${date} ${time}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+  }
+
+  document.getElementById('clearHistoryBtn').addEventListener('click', async () => {
+    await chrome.storage.local.remove(HISTORY_KEY);
+    loadHistory();
+  });
+
+  // Load history when switching to History tab
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(tc => tc.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+      if (tab.dataset.tab === 'history') loadHistory();
+    });
   });
 
   await initPopup();
