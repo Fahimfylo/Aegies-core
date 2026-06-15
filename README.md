@@ -65,14 +65,6 @@ Alternatively, download from:
 
 ## CI/CD Pipeline
 
-| Workflow | Trigger | Purpose |
-|---|---|---|
-| **CI** | Every push/PR to `main` | TypeScript check, lint, Next.js build, extension build |
-| **CD** | Tag push `v*` | Build, create GitHub Release with extension ZIP, deploy |
-| **PR Quality** | Pull requests | Auto-label by paths, size check |
-| **Security Audit** | Weekly Monday + package changes | npm audit, issues for critical vulns |
-| **Dependabot** | Weekly Monday | Automated dependency PRs (grouped by ecosystem) |
-
 ## CLI Tool
 
 ```bash
