@@ -1,6 +1,6 @@
 const CACHE = new Map();
 const CACHE_TTL = 5 * 60 * 1000;
-const NOTIFICATION_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAASklEQVR4nO3PwQkAIBADwevL7izWEnzbhJxBZiH/SZUkZTbmXq/Hz8/Pz8/Pz8/Pz8/Pz8/Pz8//q7/7020rPz8/Pz8/f4ZfUkYH2AdGpRktdxkAAAAASUVORK5CYII=';
+const NOTIFICATION_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAsUlEQVR4nO3WQQ7DIAxEUe7V2/WwOUK3dDURSpvEBBs80nzJ+zcbRClKKaXUb6/3Z1t58stvvVrrfkz+1n3cMOqP3HDmxnnYI/x37qx+qzubv9edxf/Uvdo/6vZ8e3r8Xm6cl9+ywdPtbb/ze7pn+73dM/0R7ln+KHeUv90Q6Y6yI2Z7z4asdsuG7ParDSz2fxvY7IjZXgb+16vdbcx2xGxHzHbEbEfMdsRsV0oppSL7AjqLRgMoRcH5AAAAAElFTkSuQmCC';
 
 async function getSettings() {
   const { apiUrl, disabled, notificationsDisabled } = await chrome.storage.local.get([
