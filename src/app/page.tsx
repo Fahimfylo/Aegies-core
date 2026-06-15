@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, ShieldCheck, ArrowRight, LayoutDashboard, Download, Globe, Chrome } from "lucide-react";
+import { Shield, ShieldCheck, ArrowRight, LayoutDashboard, Globe, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { FEATURES, NAV_LINKS, EXTENSION_LATEST_VERSION } from "@/constants";
+import { FEATURES, NAV_LINKS, EXTENSION_LATEST_VERSION, EXTENSION_VERSIONS } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
+import DownloadButton from "@/components/extension/DownloadButton";
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
@@ -79,6 +80,19 @@ export default function LandingPage() {
               )}
               <Button size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
                 View Documentation
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-4 pt-2">
+              <div className="w-full max-w-xs">
+                <DownloadButton extension={EXTENSION_VERSIONS[EXTENSION_LATEST_VERSION]} />
+              </div>
+              <Button asChild size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
+                <Link
+                  href={user ? "/install-extension" : "/sign-up?redirect=/install-extension"}
+                  className="flex items-center gap-2"
+                >
+                  <Globe className="w-5 h-5" /> Installation Guide
+                </Link>
               </Button>
             </div>
           </div>
@@ -163,24 +177,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
-                  <Link
-                    href={user ? "/install-extension" : "/sign-up?redirect=/install-extension"}
-                    className="flex items-center gap-2"
-                  >
-                    <Download className="w-5 h-5" /> Download Extension
-                  </Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
-                  <Link
-                    href={user ? "/install-extension" : "/sign-up?redirect=/install-extension"}
-                    className="flex items-center gap-2"
-                  >
-                    <Globe className="w-5 h-5" /> Installation Guide
-                  </Link>
-                </Button>
-              </div>
+
             </div>
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
