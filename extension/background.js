@@ -1,6 +1,6 @@
 const CACHE = new Map();
 const CACHE_TTL = 5 * 60 * 1000;
-const NOTIFICATION_ICON = chrome.runtime.getURL('icons/icon48.png');
+const NOTIFICATION_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAASklEQVR4nO3PwQkAIBADwevL7izWEnzbhJxBZiH/SZUkZTbmXq/Hz8/Pz8/Pz8/Pz8/Pz8/Pz8//q7/7020rPz8/Pz8/f4ZfUkYH2AdGpRktdxkAAAAASUVORK5CYII=';
 
 async function getSettings() {
   const { apiUrl, disabled, notificationsDisabled } = await chrome.storage.local.get([

@@ -159,3 +159,10 @@
  POST /api/security/ioc/check 200 in 78ms
  POST /api/security/ioc/check 200 in 146ms
  POST /api/security/ioc/check 200 in 95ms
+ POST /api/security/ioc/check 200 in 72ms
+ POST /api/security/ioc/check 200 in 67ms
+ POST /api/security/ioc/check 200 in 47ms
+ POST /api/security/ioc/check 200 in 59ms
+ POST /api/security/ioc/check 200 in 68ms
+ POST /api/security/ioc/check 200 in 82ms
+ POST /api/security/ioc/check 200 in 78ms
