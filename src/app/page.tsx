@@ -165,12 +165,18 @@ export default function LandingPage() {
               </ul>
               <div className="flex flex-wrap gap-4 pt-2">
                 <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
-                  <Link href="/install-extension" className="flex items-center gap-2">
+                  <Link
+                    href={user ? "/install-extension" : "/sign-up?redirect=/install-extension"}
+                    className="flex items-center gap-2"
+                  >
                     <Download className="w-5 h-5" /> Download Extension
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
-                  <Link href="/install-extension" className="flex items-center gap-2">
+                  <Link
+                    href={user ? "/install-extension" : "/sign-up?redirect=/install-extension"}
+                    className="flex items-center gap-2"
+                  >
                     <Globe className="w-5 h-5" /> Installation Guide
                   </Link>
                 </Button>

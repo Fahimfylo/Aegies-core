@@ -16,13 +16,15 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const redirectTo = searchParams?.get("redirect") || "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const result = await register(name, email, password);
+    const result = await register(name, email, password, redirectTo || undefined);
     if (!result.ok) {
       setError(result.error || "Registration failed");
       setLoading(false);
@@ -104,7 +106,7 @@ export default function SignUpPage() {
             </form>
             <p className="mt-4 text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/sign-in" className="text-primary hover:text-primary/80">
+              <Link href={"/sign-in" + (redirectTo !== "/dashboard" ? `?redirect=${redirectTo}` : "")} className="text-primary hover:text-primary/80">
                 Sign in
               </Link>
             </p>

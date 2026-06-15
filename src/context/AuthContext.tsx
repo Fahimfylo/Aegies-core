@@ -13,8 +13,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
-  register: (name: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  login: (email: string, password: string, redirect?: string) => Promise<{ ok: boolean; error?: string }>;
+  register: (name: string, email: string, password: string, redirect?: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (data: { name?: string; image?: string }) => Promise<{ ok: boolean; error?: string }>;
 }
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string, redirect?: string) => {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -55,14 +55,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       setUser(data.user);
-      router.push("/dashboard");
+      router.push(redirect || "/dashboard");
       return { ok: true };
     } catch {
       return { ok: false, error: "Network error" };
     }
   }, [router]);
 
-  const register = useCallback(async (name: string, email: string, password: string) => {
+  const register = useCallback(async (name: string, email: string, password: string, redirect?: string) => {
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       setUser(data.user);
-      router.push("/dashboard");
+      router.push(redirect || "/dashboard");
       return { ok: true };
     } catch {
       return { ok: false, error: "Network error" };

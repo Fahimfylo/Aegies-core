@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Download, Loader2, CheckCircle, AlertCircle, Shield } from "lucide-react"
+import { useAuth } from "@/context/AuthContext"
 
 type DownloadState = "idle" | "loading" | "success" | "error"
 
@@ -16,6 +17,7 @@ export default function DownloadButton({ extension }: { extension: ExtensionInfo
   const [state, setState] = useState<DownloadState>("idle")
   const [message, setMessage] = useState("")
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
 
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`
@@ -32,6 +34,11 @@ export default function DownloadButton({ extension }: { extension: ExtensionInfo
   }
 
   const handleDownload = useCallback(async () => {
+    if (!user) {
+      router.push("/sign-up?redirect=/install-extension")
+      return
+    }
+
     setState("loading")
     setMessage("")
 
@@ -63,7 +70,7 @@ export default function DownloadButton({ extension }: { extension: ExtensionInfo
       setState("error")
       setMessage(err instanceof Error ? err.message : "Something went wrong")
     }
-  }, [extension.version, router])
+  }, [extension.version, router, user])
 
   return (
     <div className="w-full max-w-md mx-auto">

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,18 +11,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 
 export default function SignInPage() {
   const { login } = useAuth();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const redirectTo = searchParams?.get("redirect") || "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const result = await login(email, password);
+    const result = await login(email, password, redirectTo || undefined);
     if (!result.ok) {
       setError(result.error || "Login failed");
       setLoading(false);
@@ -92,7 +92,7 @@ export default function SignInPage() {
             </form>
             <p className="mt-4 text-center text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
-              <Link href="/sign-up" className="text-primary hover:text-primary/80">
+              <Link href={"/sign-up" + (redirectTo ? `?redirect=${redirectTo}` : "")} className="text-primary hover:text-primary/80">
                 Sign up
               </Link>
             </p>
