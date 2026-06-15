@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function getWebBaseUrl() {
     let { apiUrl } = await chrome.storage.local.get('apiUrl');
-    if (!apiUrl || apiUrl.includes('localhost:9002')) {
+    if (!apiUrl || apiUrl.includes('localhost')) {
+      await chrome.storage.local.remove('apiUrl');
       apiUrl = 'https://aegies-core.vercel.app/api';
     }
     return apiUrl.replace(/\/api\/?$/, '');
@@ -68,7 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       let { apiUrl } = await chrome.storage.local.get('apiUrl');
-      if (!apiUrl || apiUrl.includes('localhost:9002')) {
+      if (!apiUrl || apiUrl.includes('localhost')) {
+        await chrome.storage.local.remove('apiUrl');
         apiUrl = 'https://aegies-core.vercel.app/api';
       }
       const baseUrl = apiUrl;

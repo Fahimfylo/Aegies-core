@@ -4,7 +4,8 @@ async function loadSettings() {
   ]);
 
   let apiUrlVal = apiUrl;
-  if (!apiUrlVal || apiUrlVal.includes('localhost:9002')) {
+  if (!apiUrlVal || apiUrlVal.includes('localhost')) {
+    await chrome.storage.local.remove('apiUrl');
     apiUrlVal = 'https://aegies-core.vercel.app/api';
   }
   document.getElementById('apiUrl').value = apiUrlVal;

@@ -5,8 +5,11 @@ async function getSettings() {
   const { apiUrl, disabled, notificationsDisabled } = await chrome.storage.local.get([
     'apiUrl', 'disabled', 'notificationsDisabled'
   ]);
+  if (!apiUrl || apiUrl.includes('localhost')) {
+    await chrome.storage.local.remove('apiUrl');
+  }
   return {
-    apiUrl: (!apiUrl || apiUrl.includes('localhost:9002')) ? 'https://aegies-core.vercel.app/api' : apiUrl,
+    apiUrl: (!apiUrl || apiUrl.includes('localhost')) ? 'https://aegies-core.vercel.app/api' : apiUrl,
     disabled: !!disabled,
     notificationsDisabled: !!notificationsDisabled,
   };

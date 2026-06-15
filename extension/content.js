@@ -12,7 +12,8 @@ async function showWarning(data) {
   if (warningOverlay) return;
 
   let { apiUrl } = await chrome.storage.local.get('apiUrl');
-  if (!apiUrl || apiUrl.includes('localhost:9002')) {
+  if (!apiUrl || apiUrl.includes('localhost')) {
+    await chrome.storage.local.remove('apiUrl');
     apiUrl = 'https://aegies-core.vercel.app/api';
   }
   const baseUrl = apiUrl.replace(/\/api\/?$/, '');
