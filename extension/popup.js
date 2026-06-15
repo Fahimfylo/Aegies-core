@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   refreshBtn.addEventListener('click', () => initPopup());
 
   async function getWebBaseUrl() {
-    const { apiUrl } = await chrome.storage.local.get('apiUrl');
-    return (apiUrl || 'https://aegies-core.vercel.app/api').replace(/\/api\/?$/, '');
+    let { apiUrl } = await chrome.storage.local.get('apiUrl');
+    if (!apiUrl || apiUrl.includes('localhost:9002')) {
+      apiUrl = 'https://aegies-core.vercel.app/api';
+    }
+    return apiUrl.replace(/\/api\/?$/, '');
   }
 
   async function initPopup() {
@@ -64,8 +67,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginBtn.disabled = true;
 
     try {
-      const { apiUrl } = await chrome.storage.local.get('apiUrl');
-      const baseUrl = apiUrl || 'https://aegies-core.vercel.app/api';
+      let { apiUrl } = await chrome.storage.local.get('apiUrl');
+      if (!apiUrl || apiUrl.includes('localhost:9002')) {
+        apiUrl = 'https://aegies-core.vercel.app/api';
+      }
+      const baseUrl = apiUrl;
       const res = await fetch(`${baseUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -3,7 +3,11 @@ async function loadSettings() {
     'apiUrl', 'whitelist', 'disabled', 'notificationsDisabled'
   ]);
 
-  document.getElementById('apiUrl').value = apiUrl || 'https://aegies-core.vercel.app/api';
+  let apiUrlVal = apiUrl;
+  if (!apiUrlVal || apiUrlVal.includes('localhost:9002')) {
+    apiUrlVal = 'https://aegies-core.vercel.app/api';
+  }
+  document.getElementById('apiUrl').value = apiUrlVal;
   document.getElementById('enableProtection').checked = !disabled;
   document.getElementById('enableNotifications').checked = !notificationsDisabled;
   document.getElementById('whitelist').value = (whitelist || []).join('\n');

@@ -11,8 +11,11 @@ chrome.runtime.onMessage.addListener((message) => {
 async function showWarning(data) {
   if (warningOverlay) return;
 
-  const { apiUrl } = await chrome.storage.local.get('apiUrl');
-  const baseUrl = (apiUrl || 'https://aegies-core.vercel.app/api').replace(/\/api\/?$/, '');
+  let { apiUrl } = await chrome.storage.local.get('apiUrl');
+  if (!apiUrl || apiUrl.includes('localhost:9002')) {
+    apiUrl = 'https://aegies-core.vercel.app/api';
+  }
+  const baseUrl = apiUrl.replace(/\/api\/?$/, '');
 
   const isMalicious = data.classification === 'malicious';
   const severityColor = isMalicious ? '#ff4444' : '#ff8800';
