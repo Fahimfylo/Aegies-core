@@ -1,4 +1,4 @@
-import { Download, FileArchive, Globe, ToggleLeft, FolderOpen, CheckCircle, Shield } from "lucide-react"
+import { Download, FileArchive, Globe, ToggleLeft, FolderOpen, CheckCircle, Shield, Chrome, ShieldCheck } from "lucide-react"
 import { EXTENSION_VERSIONS, EXTENSION_LATEST_VERSION, EXTENSION_STEPS, EXTENSION_PERMISSIONS, EXTENSION_MIN_BROWSER_VERSION } from "@/constants"
 import DownloadButton from "@/components/extension/DownloadButton"
 import type { Metadata } from "next"
@@ -127,6 +127,37 @@ export default function InstallExtensionPage() {
           <div className="rounded-xl border border-white/10 bg-white/5 p-8">
             {STEPS.map((step, i) => (
               <StepCard key={i} {...step} step={i + 1} isLast={i === STEPS.length - 1} />
+            ))}
+          </div>
+        </section>
+
+        {/* Chrome Extension v{EXTENSION_LATEST_VERSION} */}
+        <section className="mb-16 rounded-xl border border-white/10 bg-white/5 p-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <Chrome className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-white">Chrome Extension v{EXTENSION_LATEST_VERSION}</h2>
+              <p className="text-sm text-gray-500">Real-Time Browser Protection</p>
+            </div>
+          </div>
+          <p className="mb-6 text-sm leading-relaxed text-gray-400">
+            Detect phishing sites, malicious domains, and unsafe URLs before they load.
+            AegisCore Security Guard integrates directly into your Chrome browser.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              ["Automatic URL scanning on every page load", ShieldCheck],
+              ["Security warning overlays for dangerous sites", ShieldCheck],
+              ["Desktop threat notifications", ShieldCheck],
+              ["Right-click context menu for instant scans", ShieldCheck],
+              ["Email phishing & breach checking on the fly", ShieldCheck],
+            ].map(([text, Icon]) => (
+              <div key={text as string} className="flex items-center gap-2 text-sm text-gray-400">
+                <Icon className="h-4 w-4 shrink-0 text-primary" />
+                {text as string}
+              </div>
             ))}
           </div>
         </section>

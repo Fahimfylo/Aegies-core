@@ -4,7 +4,9 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState, useRef } from "react";
 import Navbar from "@/components/navigation/Navbar";
-import { User, Shield, Lock, Database, Save, RefreshCcw, Download, Terminal, Camera, LogOut } from "lucide-react";
+import { User, Shield, Lock, Database, Save, RefreshCcw, Download, Terminal, Camera, LogOut, Globe, Chrome } from "lucide-react";
+import Link from "next/link";
+import { EXTENSION_LATEST_VERSION } from "@/constants";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -186,6 +188,37 @@ export default function Settings() {
                     <SelectItem value="deep">Deep (Hardware Intensive)</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Chrome Extension */}
+          <Card className="glass-dark border-white/5">
+            <CardHeader className="flex flex-row items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Chrome className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">Chrome Extension v{EXTENSION_LATEST_VERSION}</CardTitle>
+                <CardDescription>Real-Time Browser Protection</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Detect phishing sites, malicious domains, and unsafe URLs before they load.
+                AegisCore Security Guard integrates directly into your Chrome browser.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
+                  <Link href="/install-extension" className="flex items-center gap-2">
+                    <Download className="w-5 h-5" /> Download Extension
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
+                  <Link href="/install-extension" className="flex items-center gap-2">
+                    <Globe className="w-5 h-5" /> Installation Guide
+                  </Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
