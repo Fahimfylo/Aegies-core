@@ -194,16 +194,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-chrome.contextMenus.create({
-  id: 'scan-url',
-  title: 'Scan this link with AegisCore',
-  contexts: ['link'],
-});
-
-chrome.contextMenus.create({
-  id: 'scan-page',
-  title: 'Scan this page with AegisCore',
-  contexts: ['page'],
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: 'scan-url',
+      title: 'Scan this link with AegisCore',
+      contexts: ['link'],
+    });
+    chrome.contextMenus.create({
+      id: 'scan-page',
+      title: 'Scan this page with AegisCore',
+      contexts: ['page'],
+    });
+  });
+  chrome.storage.local.get('token').then(({ token }) => {
+    updateBadge(token ? 'safe' : 'offline');
+  });
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -241,8 +247,4 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.get('token').then(({ token }) => {
-    updateBadge(token ? 'safe' : 'offline');
-  });
-});
+
