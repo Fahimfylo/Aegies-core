@@ -1,0 +1,39 @@
+extension:
+  - extension/**/*
+
+backend:
+  - src/app/api/**/*
+  - src/services/**/*
+  - src/lib/models/**/*
+  - src/lib/jwt.ts
+  - src/lib/db.ts
+  - src/middleware.ts
+
+frontend:
+  - src/app/**/*
+  - src/components/**/*
+  - src/context/**/*
+
+ai:
+  - src/ai/**/*
+
+types:
+  - src/types/**/*
+
+constants:
+  - src/constants/**/*
+
+config:
+  - package.json
+  - tsconfig.json
+  - next.config.ts
+  - tailwind.config.ts
+  - postcss.config.mjs
+  - components.json
+
+ci-cd:
+  - .github/**/*
+
+docs:
+  - docs/**/*
+  - "**/*.md"
