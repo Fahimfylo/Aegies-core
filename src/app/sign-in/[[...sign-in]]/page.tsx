@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,13 +11,20 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function SignInPage() {
-  const { login } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const redirectTo = searchParams?.get("redirect") || "";
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace(redirectTo || "/dashboard");
+    }
+  }, [user, authLoading, router, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
