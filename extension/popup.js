@@ -26,7 +26,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   settingsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
   refreshBtn.addEventListener('click', () => initPopup());
 
+  async function getWebBaseUrl() {
+    const { apiUrl } = await chrome.storage.local.get('apiUrl');
+    return (apiUrl || 'http://localhost:9002/api').replace(/\/api\/?$/, '');
+  }
+
   async function initPopup() {
+    const baseUrl = await getWebBaseUrl();
+    const signUpLink = document.getElementById('signUpLink');
+    if (signUpLink) signUpLink.href = `${baseUrl}/sign-up`;
+
     const { token } = await chrome.storage.local.get('token');
     if (!token) {
       authView.style.display = 'block';
@@ -64,7 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginBtn.disabled = true;
 
     try {
-      const res = await fetch('http://localhost:9002/api/auth/login', {
+      const { apiUrl } = await chrome.storage.local.get('apiUrl');
+      const baseUrl = apiUrl || 'http://localhost:9002/api';
+      const res = await fetch(`${baseUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -95,8 +106,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     initPopup();
   });
 
-  dashboardBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'http://localhost:9002/dashboard' });
+  dashboardBtn.addEventListener('click', async () => {
+    const baseUrl = await getWebBaseUrl();
+    chrome.tabs.create({ url: `${baseUrl}/dashboard` });
   });
 
   scanCurrentBtn.addEventListener('click', async () => {

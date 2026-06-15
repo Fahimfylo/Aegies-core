@@ -5,10 +5,14 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.type === 'SECURITY_WARNING') {
     showWarning(message.data);
   }
+  return false;
 });
 
-function showWarning(data) {
+async function showWarning(data) {
   if (warningOverlay) return;
+
+  const { apiUrl } = await chrome.storage.local.get('apiUrl');
+  const baseUrl = (apiUrl || 'http://localhost:9002/api').replace(/\/api\/?$/, '');
 
   const isMalicious = data.classification === 'malicious';
   const severityColor = isMalicious ? '#ff4444' : '#ff8800';
@@ -44,7 +48,7 @@ function showWarning(data) {
           </p>
         </div>
         <div style="display: flex; gap: 8px; flex-shrink: 0;">
-          <a href="http://localhost:9002/dashboard" target="_blank" style="
+          <a href="${baseUrl}/dashboard" target="_blank" style="
             background: rgba(59,130,246,0.3);
             border: 1px solid rgba(59,130,246,0.4);
             color: #60A5FA;
