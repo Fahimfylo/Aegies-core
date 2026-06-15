@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = checkIOC({ value, type });
+    const result = await checkIOC({ value, type });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error('IOC check error:', error);
