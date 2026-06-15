@@ -97,6 +97,7 @@ function updateBadge(status) {
 
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   if (details.frameId !== 0) return;
+  console.log('AegisCore: navigating to', details.url);
 
   const { disabled } = await chrome.storage.local.get('disabled');
   if (disabled) return;
@@ -123,20 +124,28 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
 
   updateBadge(result.classification);
 
-  chrome.tabs.sendMessage(details.tabId, {
-    type: 'SECURITY_WARNING',
-    data: result,
-  }).catch(() => {});
+  try {
+    await chrome.tabs.sendMessage(details.tabId, {
+      type: 'SECURITY_WARNING',
+      data: result,
+    });
+  } catch (e) {
+    console.warn('AegisCore: content script not ready', e.message);
+  }
 
   const { notificationsDisabled } = await getSettings();
   if (!notificationsDisabled) {
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: NOTIFICATION_ICON,
-      title: 'AegisCore Security Alert',
-      message: `${result.classification === 'malicious' ? 'Dangerous' : 'Suspicious'} site detected: ${url.hostname}`,
-      priority: 2,
-    });
+    try {
+      await chrome.notifications.create({
+        type: 'basic',
+        iconUrl: NOTIFICATION_ICON,
+        title: 'AegisCore Security Alert',
+        message: `${result.classification === 'malicious' ? 'Dangerous' : 'Suspicious'} site detected: ${url.hostname}`,
+        priority: 2,
+      });
+    } catch (e) {
+      console.warn('AegisCore: notification failed', e.message);
+    }
   }
 });
 

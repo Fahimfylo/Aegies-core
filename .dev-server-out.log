@@ -101,3 +101,61 @@
  GET /api/dashboard 200 in 85ms
  GET /api/dashboard 200 in 76ms
  GET / 200 in 70ms
+ POST /api/auth/login 200 in 317ms
+ ○ Compiling /api/security/ioc/check ...
+ ✓ Compiled /api/security/ioc/check in 8.1s (3623 modules)
+ POST /api/security/ioc/check 200 in 14458ms
+ POST /api/security/ioc/check 200 in 46ms
+ POST /api/security/ioc/check 200 in 70ms
+ POST /api/security/ioc/check 200 in 59ms
+ POST /api/security/ioc/check 200 in 72ms
+ POST /api/security/ioc/check 200 in 75ms
+ POST /api/security/ioc/check 200 in 131ms
+ POST /api/security/ioc/check 200 in 152ms
+ POST /api/security/ioc/check 200 in 272ms
+ GET / 200 in 1747ms
+ GET / 200 in 342ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 3.9s (2552 modules)
+ GET /api/auth/me 200 in 4362ms
+ POST /api/security/ioc/check 200 in 2184ms
+ POST /api/security/ioc/check 200 in 162ms
+ POST /api/security/ioc/check 200 in 73ms
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 2.5s (1417 modules)
+ POST /api/auth/login 200 in 3450ms
+ ○ Compiling /api/security/ioc/check ...
+ ✓ Compiled /api/security/ioc/check in 1155ms (2553 modules)
+ POST /api/security/ioc/check 200 in 3382ms
+ POST /api/security/ioc/check 200 in 67ms
+ POST /api/security/ioc/check 200 in 117ms
+ POST /api/security/ioc/check 200 in 45ms
+ POST /api/security/ioc/check 200 in 60ms
+ POST /api/security/ioc/check 200 in 72ms
+ POST /api/security/ioc/check 200 in 87ms
+ POST /api/security/ioc/check 200 in 69ms
+ POST /api/security/ioc/check 200 in 90ms
+ POST /api/security/ioc/check 200 in 109ms
+ POST /api/security/ioc/check 200 in 207ms
+ POST /api/security/ioc/check 200 in 103ms
+ POST /api/security/ioc/check 200 in 283ms
+ POST /api/security/ioc/check 200 in 135ms
+ POST /api/security/ioc/check 200 in 102ms
+ POST /api/security/ioc/check 200 in 78ms
+ POST /api/security/ioc/check 200 in 96ms
+ POST /api/security/ioc/check 200 in 122ms
+ POST /api/security/ioc/check 200 in 123ms
+ POST /api/security/ioc/check 200 in 87ms
+ POST /api/security/ioc/check 200 in 173ms
+ POST /api/security/ioc/check 200 in 69ms
+ POST /api/security/ioc/check 200 in 341ms
+ POST /api/security/ioc/check 200 in 380ms
+ POST /api/security/ioc/check 200 in 193ms
+ POST /api/security/ioc/check 200 in 106ms
+ POST /api/security/ioc/check 200 in 880ms
+ POST /api/security/ioc/check 200 in 80ms
+ POST /api/security/ioc/check 200 in 94ms
+ POST /api/security/ioc/check 200 in 89ms
+ POST /api/security/ioc/check 200 in 78ms
+ POST /api/security/ioc/check 200 in 146ms
+ POST /api/security/ioc/check 200 in 95ms
