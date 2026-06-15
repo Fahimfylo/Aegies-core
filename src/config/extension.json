@@ -1,0 +1,20 @@
+{
+  "latestVersion": "2.0.0",
+  "versions": {
+    "2.0.0": {
+      "version": "2.0.0",
+      "file": "extension-v2.0.0.zip",
+      "size": 12938,
+      "releaseDate": "2026-06-15T00:00:00.000Z",
+      "changelog": [
+        "Added authentication with JWT token storage",
+        "Added toolbar badge showing threat level",
+        "Added right-click context menu for link/page scanning",
+        "Added tabbed popup with Overview, Scanner, Email, Breach checks",
+        "Added options/settings page with whitelist management",
+        "Improved warning overlay with details link",
+        "Added SVG icons for all sizes"
+      ]
+    }
+  }
+}

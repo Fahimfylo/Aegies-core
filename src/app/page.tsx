@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, ShieldCheck, ArrowRight, LayoutDashboard } from "lucide-react";
+import { Shield, ShieldCheck, ArrowRight, LayoutDashboard, Download, Globe, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { FEATURES, NAV_LINKS } from "@/constants";
+import { FEATURES, NAV_LINKS, EXTENSION_LATEST_VERSION } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LandingPage() {
@@ -131,6 +131,77 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Browser Extension Section */}
+      <section className="py-24 bg-black/20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
+                <Chrome className="w-4 h-4" />
+                <span>Chrome Extension v{EXTENSION_LATEST_VERSION}</span>
+              </div>
+              <h2 className="font-headline text-4xl font-bold">Real-Time Browser Protection</h2>
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                Detect phishing sites, malicious domains, and unsafe URLs before they load.
+                AegisCore Security Guard integrates directly into your Chrome browser.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Automatic URL scanning on every page load",
+                  "Security warning overlays for dangerous sites",
+                  "Desktop threat notifications",
+                  "Right-click context menu for instant scans",
+                  "Email phishing & breach checking on the fly",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <ShieldCheck className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90">
+                  <Link href="/install-extension" className="flex items-center gap-2">
+                    <Download className="w-5 h-5" /> Download Extension
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5">
+                  <Link href="/install-extension" className="flex items-center gap-2">
+                    <Globe className="w-5 h-5" /> Installation Guide
+                  </Link>
+                </Button>
+              </div>
+            </div>
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+              <div className="relative glass rounded-2xl overflow-hidden shadow-2xl p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">AegisCore Security Guard</p>
+                    <p className="text-sm text-muted-foreground">v{EXTENSION_LATEST_VERSION} &middot; 12.9 KB</p>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-white/5 p-4 space-y-3">
+                  {[
+                    ["Current Page", "https://example.com"],
+                    ["Risk Assessment", "✅ Safe — no threats detected"],
+                    ["Quick Actions", "Scan URL &middot; Open Dashboard"],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <p className="text-xs uppercase tracking-wider text-gray-600 mb-1">{label}</p>
+                      <p className="text-sm font-medium text-gray-300" dangerouslySetInnerHTML={{ __html: value }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

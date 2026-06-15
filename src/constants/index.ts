@@ -4,3 +4,4 @@ export * from './threat-intel';
 export * from './landing';
 export * from './scanner';
 export * from './security';
+export * from './extension';

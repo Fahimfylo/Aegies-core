@@ -25,5 +25,6 @@ export const FEATURES: FeatureItem[] = [
 export const NAV_LINKS = [
   { label: "Features", href: "#features" },
   { label: "Solutions", href: "#solutions" },
+  { label: "Extension", href: "/install-extension" },
   { label: "About", href: "#about" },
 ];
