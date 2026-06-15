@@ -1,12 +1,6 @@
 const CACHE = new Map();
 const CACHE_TTL = 5 * 60 * 1000;
-const NOTIFICATION_ICON = 'data:image/svg+xml,' + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">' +
-  '<rect width="48" height="48" rx="8" fill="#0A0C16"/>' +
-  '<path d="M24 6L8 12v10.5C8 31 13.5 39 24 42c10.5-3 16-11 16-19.5V12L24 6z" fill="#3B82F6" opacity="0.9"/>' +
-  '<path d="M19 24l4 4 8-8" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-  '</svg>'
-);
+const NOTIFICATION_ICON = chrome.runtime.getURL('icons/icon48.png');
 
 async function getSettings() {
   const { apiUrl, disabled, notificationsDisabled } = await chrome.storage.local.get([
