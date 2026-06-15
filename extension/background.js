@@ -6,7 +6,7 @@ async function getSettings() {
     'apiUrl', 'disabled', 'notificationsDisabled'
   ]);
   return {
-    apiUrl: apiUrl || 'http://localhost:9002/api',
+    apiUrl: apiUrl || 'https://aegies-core.vercel.app/api',
     disabled: !!disabled,
     notificationsDisabled: !!notificationsDisabled,
   };

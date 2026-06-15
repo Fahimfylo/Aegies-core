@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const API_BASE = process.env.AEGISCORE_API || 'http://localhost:9002/api';
+const API_BASE = process.env.AEGISCORE_API || 'https://aegies-core.vercel.app/api';
 const TOKEN = process.env.AEGISCORE_TOKEN || '';
 
 async function apiRequest(endpoint, method = 'POST', body = null) {
@@ -162,7 +162,7 @@ async function main() {
     console.log('    aegis help              — Show this help');
     console.log('');
     console.log('  Environment:');
-    console.log('    AEGISCORE_API   — API base URL (default: http://localhost:9002/api)');
+    console.log('    AEGISCORE_API   — API base URL (default: https://aegies-core.vercel.app/api)');
     console.log('    AEGISCORE_TOKEN — Auth token for API');
     return;
   }

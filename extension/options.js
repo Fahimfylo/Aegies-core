@@ -3,7 +3,7 @@ async function loadSettings() {
     'apiUrl', 'whitelist', 'disabled', 'notificationsDisabled'
   ]);
 
-  document.getElementById('apiUrl').value = apiUrl || 'http://localhost:9002/api';
+  document.getElementById('apiUrl').value = apiUrl || 'https://aegies-core.vercel.app/api';
   document.getElementById('enableProtection').checked = !disabled;
   document.getElementById('enableNotifications').checked = !notificationsDisabled;
   document.getElementById('whitelist').value = (whitelist || []).join('\n');

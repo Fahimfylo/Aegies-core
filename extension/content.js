@@ -12,7 +12,7 @@ async function showWarning(data) {
   if (warningOverlay) return;
 
   const { apiUrl } = await chrome.storage.local.get('apiUrl');
-  const baseUrl = (apiUrl || 'http://localhost:9002/api').replace(/\/api\/?$/, '');
+  const baseUrl = (apiUrl || 'https://aegies-core.vercel.app/api').replace(/\/api\/?$/, '');
 
   const isMalicious = data.classification === 'malicious';
   const severityColor = isMalicious ? '#ff4444' : '#ff8800';
