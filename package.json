@@ -48,7 +48,7 @@
     "jose": "^6.2.3",
     "lucide-react": "^0.475.0",
     "mongoose": "^9.6.3",
-    "next": "15.5.9",
+    "next": "16.2.9",
     "patch-package": "^8.0.0",
     "react": "^19.2.1",
     "react-day-picker": "^9.11.3",
