@@ -48,7 +48,7 @@ jobs:
 
       - name: Create issue for critical vulns
         if: env.CRITICAL_VULNS != '[]' && env.CRITICAL_VULNS != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const vulns = JSON.parse(process.env.CRITICAL_VULNS);
